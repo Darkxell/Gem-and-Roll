@@ -39,5 +39,6 @@ public class TestState extends GameState {
     public void onTouch(MotionEvent e) {
         offset = 0;
         horoffset = (int) e.getX();
+
     }
 }

@@ -21,16 +21,16 @@ public class Dice {
     /**
      * The last rolled face.
      */
-    byte face = UNROLLED;
+    private byte face = UNROLLED;
     /**
      * The dice color.
      */
-    Color display;
+    private Color display;
 
     /**
      * A list of all the rollable faces.
      */
-    byte[] faces;
+    private byte[] faces;
 
     /**
      * Roll this dice using the wanted random number generator. Will randomely roll if the generator is null. Also returns the result of the roll.
@@ -38,6 +38,14 @@ public class Dice {
     public byte roll(SeededRNG generator) {
         //TODO
         return UNROLLED;
+    }
+
+    public Color getColor(){
+        return this.display;
+    }
+
+    public byte getFace(){
+        return this.face;
     }
 
 }

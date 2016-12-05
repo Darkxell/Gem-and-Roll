@@ -6,7 +6,11 @@ package com.darkxell.gemandroll.mechanics;
 
 public abstract class PlayerAI {
 
-    public byte ID;
+    public final byte ID;
+
+    public PlayerAI(byte ID){
+        this.ID = ID;
+    }
 
     /**
      * Returns wether this AI should play the turn or pass given the needed board informations.
