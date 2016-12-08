@@ -1,5 +1,6 @@
 package com.darkxell.gemandroll.gamestates.statesutility;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
@@ -15,6 +16,10 @@ public abstract class GameState {
      * The activity displaying this state.
      */
     protected MainActivity holder;
+
+    public GameState(MainActivity holder) {
+        this.holder = holder;
+    }
 
     /**
      * Prints the state on a buffer.

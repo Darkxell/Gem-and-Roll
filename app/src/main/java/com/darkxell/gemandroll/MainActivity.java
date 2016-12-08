@@ -1,6 +1,7 @@
 package com.darkxell.gemandroll;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -17,7 +18,7 @@ public class MainActivity extends Activity {
     /**
      * The current gamestate being used.
      */
-    private GameState currentstate = new TestState();
+    private GameState currentstate = new TestState(this);
     /**
      * Defines the ammount of updates per second of the app. FPS is as much as possible. (This is a small app for a school project, no one cares about battery usage.)
      */
@@ -74,4 +75,6 @@ public class MainActivity extends Activity {
         //super.onBackPressed(); // Close the activity
         this.currentstate.onBackPressed();
     }
+
+
 }
