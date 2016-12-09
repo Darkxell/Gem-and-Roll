@@ -14,7 +14,6 @@ public class CustomView extends View {
 
     private GameState currentstate;
     private long time = 0L;
-    private Canvas c;
 
     /**
      * Builds a new Customview.
@@ -34,7 +33,6 @@ public class CustomView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         currentstate.print(canvas);
-        c = canvas;
     }
 
     /**

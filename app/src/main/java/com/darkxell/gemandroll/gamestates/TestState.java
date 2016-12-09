@@ -5,12 +5,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
+import com.darkxell.gemandroll.gamestates.statesutility.MainMenuState;
 
 /**
  * Created by Darkxell on 03/12/2016.
@@ -42,6 +42,7 @@ public class TestState extends GameState {
     @Override
     public void update() {
         offset += 5;
+        if (horoffset <= 5) super.holder.setState(new MainMenuState(super.holder));
     }
 
     @Override
