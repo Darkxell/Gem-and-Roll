@@ -20,7 +20,9 @@ public class MainMenuState extends GameState {
     }
 
     private int verticaloffset;
+    private int counter;
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.menubackground);
+    private Bitmap title = BitmapFactory.decodeResource(holder.getResources(), R.drawable.title);
 
     @Override
     public void print(Canvas buffer) {
@@ -30,6 +32,11 @@ public class MainMenuState extends GameState {
             buffer.drawBitmap(background, null, new Rect(0, buffer.getHeight() - imageheight, buffer.getWidth(), buffer.getHeight()), null);
         else
             buffer.drawBitmap(background, null, new Rect(0, -verticaloffset, buffer.getWidth(), imageheight - verticaloffset), null);
+        if(counter>90){
+            buffer.drawBitmap(title,(buffer.getWidth()/2)-(title.getWidth()/2),(buffer.getHeight()/2)-(title.getHeight()/2)-Math.min(counter - 89,110),null);
+
+        }
+
     }
 
     @Override
@@ -37,5 +44,6 @@ public class MainMenuState extends GameState {
         int nofs = verticaloffset + 1 + verticaloffset / 30;
         if (nofs < Integer.MAX_VALUE / 2)
             verticaloffset = nofs;//Prevent the offset to loop around INTEGER.MAX_VALUE
+        ++counter;
     }
 }
