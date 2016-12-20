@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import com.darkxell.gemandroll.gamestates.TestState;
 import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
+import com.darkxell.gemandroll.gamestates.statesutility.MainMenuState;
 import com.darkxell.gemandroll.gamestates.statesutility.Updater;
 
 public class MainActivity extends Activity {
@@ -31,7 +32,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.view = new CustomView(this);
-        this.view.setState(currentstate);
+        this.view.setState(currentstate = new MainMenuState(this));
         setContentView(view);
         createUpdaters();
     }
