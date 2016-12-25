@@ -8,6 +8,9 @@ public abstract class PlayerAI {
 
     public final byte ID;
 
+    public static final byte UndefinedAI = 0;
+    public static final byte TurnValueAI = 1;
+
     public PlayerAI(byte ID){
         this.ID = ID;
     }

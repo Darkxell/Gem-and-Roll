@@ -13,7 +13,7 @@ public class Dice {
     public static final byte REROLL = 2;
     public static final byte HURT = 2;
 
-    public Dice(byte[] faces, Color color) {
+    public Dice(byte[] faces, int color) {
         this.display = color;
         this.faces = faces;
     }
@@ -25,7 +25,7 @@ public class Dice {
     /**
      * The dice color.
      */
-    private Color display;
+    private int display;
 
     /**
      * A list of all the rollable faces.
@@ -40,12 +40,49 @@ public class Dice {
         return UNROLLED;
     }
 
-    public Color getColor(){
+    public int getColor() {
         return this.display;
     }
 
-    public byte getFace(){
+    public byte getFace() {
         return this.face;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Dice) ? ((Dice) obj).getFace() == this.getFace() && ((Dice) obj).getColor() == this.getColor() : false;
+    }
+
+    /**
+     * Returns the probability of rolling a certain face with this dice.
+     */
+    public float getFaceProbability(byte face) {
+        int correcponding = 0;
+        for (int i = 0; i < this.faces.length; ++i)
+            if (this.faces[i] == face) ++correcponding;
+        float r = correcponding / this.faces.length;
+        return r;
+    }
+
+    /**
+     * Creates and returns a new typical green dice dice object.
+     */
+    public static Dice getTypicalGreenDice() {
+        return new Dice(new byte[]{GEM, GEM, GEM, HURT, REROLL, REROLL}, Color.GREEN);
+    }
+
+    /**
+     * Creates and returns a new typical yellow dice dice object.
+     */
+    public static Dice getTypicalYellowDice() {
+        return new Dice(new byte[]{GEM, GEM, HURT, HURT, REROLL, REROLL}, Color.YELLOW);
+    }
+
+    /**
+     * Creates and returns a new typical red dice dice object.
+     */
+    public static Dice getTypicalRedDice() {
+        return new Dice(new byte[]{GEM, HURT, HURT, HURT, REROLL, REROLL}, Color.RED);
     }
 
 }
