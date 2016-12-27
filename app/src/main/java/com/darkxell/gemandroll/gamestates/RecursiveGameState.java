@@ -60,4 +60,14 @@ public class RecursiveGameState extends GameState {
     public void update() {
 
     }
+
+    /**
+     * Gets a new array representing a full pouch
+     */
+    private Dice[] getFullPouch() {
+        return new Dice[]{Dice.getTypicalGreenDice(), Dice.getTypicalGreenDice(), Dice.getTypicalGreenDice(),
+                Dice.getTypicalGreenDice(), Dice.getTypicalGreenDice(), Dice.getTypicalGreenDice(),
+                Dice.getTypicalYellowDice(), Dice.getTypicalYellowDice(), Dice.getTypicalYellowDice(),
+                Dice.getTypicalYellowDice(), Dice.getTypicalRedDice(), Dice.getTypicalRedDice(), Dice.getTypicalRedDice()};
+    }
 }
