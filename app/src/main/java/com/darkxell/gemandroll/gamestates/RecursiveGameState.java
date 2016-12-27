@@ -16,10 +16,13 @@ import com.darkxell.gemandroll.mechanics.replays.Replay;
 public class RecursiveGameState extends GameState {
 
     /**
-     * <builds a new Playstate thjat can be used to actually play the game.
+     * <builds a new Playstate that can be used to actually play the game.
      */
-    public RecursiveGameState(MainActivity holder) {
+    public RecursiveGameState(MainActivity holder, Player[] players) {
         super(holder);
+        this.players = players;
+        this.currentreplay = new Replay();
+        this.generator = new SeededRNG();
     }
 
     /**
@@ -34,14 +37,16 @@ public class RecursiveGameState extends GameState {
      */
     public RecursiveGameState(Replay r, MainActivity holder) {
         super(holder);
-//TODO
+        this.currentreplay = r;
+        this.isReplay = true;
+        this.generator = new SeededRNG(r.seed);
     }
 
 
     private Player[] players;
     private SeededRNG generator;
     private Dice[] pouch, rolled, hand;
-    int stateiteration;
+    int stateiteration = 0;
     private Replay currentreplay = null;
     private boolean isReplay = false;
 

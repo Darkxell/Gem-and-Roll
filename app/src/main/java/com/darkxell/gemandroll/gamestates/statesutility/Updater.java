@@ -6,7 +6,7 @@ package com.darkxell.gemandroll.gamestates.statesutility;
 
 public abstract class Updater {
 
-    private static final boolean SHOWFPS = true;
+    private static final boolean SHOWFPS = false;
     /**
      * Will allow 1 ms of sleep time between each print if set to true.
      */

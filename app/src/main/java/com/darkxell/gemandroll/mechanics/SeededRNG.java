@@ -9,13 +9,32 @@ import java.util.Random;
 
 public class SeededRNG {
 
+    /**
+     * The random java object used to do calculations
+     */
     private Random rand;
+    /**
+     * THe seed of the internal random objkect.
+     */
+    private long seed;
 
     /**
-     * Creates a new SeededRNG.
+     * Creates a new SeededRNG with the wanted seed.
      */
     public SeededRNG(long seed) {
         this.rand = new Random(seed);
+    }
+
+    /**
+     * Creates a new SeededRNG with a random seed.
+     */
+    public SeededRNG() {
+        this.seed = new Random().nextLong();
+        this.rand = new Random(this.seed);
+    }
+
+    public long getSeed() {
+        return this.seed;
     }
 
     /**

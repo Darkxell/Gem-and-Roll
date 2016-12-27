@@ -1,17 +1,13 @@
 package com.darkxell.gemandroll;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.gamestates.TestState;
 import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
-import com.darkxell.gemandroll.gamestates.statesutility.MainMenuState;
+import com.darkxell.gemandroll.gamestates.MainMenuState;
 import com.darkxell.gemandroll.gamestates.statesutility.Updater;
 
 public class MainActivity extends Activity {

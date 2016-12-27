@@ -10,7 +10,6 @@ import android.view.MotionEvent;
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
-import com.darkxell.gemandroll.gamestates.statesutility.MainMenuState;
 
 /**
  * Created by Darkxell on 03/12/2016.
