@@ -3,6 +3,8 @@ package com.darkxell.gemandroll.gamestates;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
@@ -28,6 +30,9 @@ public class RecursiveGameState extends GameState {
         this.currentreplay = new Replay();
         this.generator = new SeededRNG();
         this.resetPouches();
+        this.paint = new Paint();
+        this.paint.setColor(Color.BLACK);
+        this.paint.setStyle(Paint.Style.FILL);
     }
 
     /**
@@ -38,6 +43,9 @@ public class RecursiveGameState extends GameState {
         this.resetPouches();
         this.players = previous.players;
         this.stateiteration = previous.stateiteration + 1;
+        this.paint = new Paint();
+        this.paint.setColor(Color.BLACK);
+        this.paint.setStyle(Paint.Style.FILL);
     }
 
     /**
@@ -49,7 +57,12 @@ public class RecursiveGameState extends GameState {
         this.isReplay = true;
         this.generator = new SeededRNG(r.seed);
         this.resetPouches();
+        this.paint = new Paint();
+        this.paint.setColor(Color.BLACK);
+        this.paint.setStyle(Paint.Style.FILL);
     }
+
+    private Paint paint;
 
     private Player[] players;
     private SeededRNG generator;
@@ -69,6 +82,7 @@ public class RecursiveGameState extends GameState {
 
     @Override
     public void print(Canvas buffer) {
+
         buffer.drawBitmap(background, null, new Rect(0, 0, buffer.getWidth(), buffer.getHeight()), null);
 
         //Draws the horizontal bar and T bar at the bottom.
@@ -93,6 +107,23 @@ public class RecursiveGameState extends GameState {
             int offset = i * (spritesize + 30);
             buffer.drawBitmap((health >= i) ? heartfull : heartempty, null, new Rect(verticle + 70 + offset, heartheight, verticle + 70 + spritesize + offset, heartheight + spritesize), null);
         }
+
+        //Draws the player name
+        String text = "Player name here";
+        this.paint.setTextSize(buffer.getHeight() / 20);
+        buffer.drawText(text, verticle + 80, barheight + 100, this.paint);
+
+
+        //Draws the reroll and endturn buttons
+        int buttonwidth = buffer.getWidth() - (verticle + 40 + (3 * (spritesize + 30)));
+        int buttonheight = (button.getHeight() * buttonwidth) / button.getWidth();
+        buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, barheight + 35, buffer.getWidth(), barheight + 35 + buttonheight), null);
+        text = "Reroll";
+        buffer.drawText(text, buffer.getWidth() - (buttonwidth/2) - (this.paint.measureText(text)/2),  barheight + 45 + (buttonheight/2), this.paint);
+        int buttonpadding = buttonheight + 30;
+        buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, barheight + 35 + buttonpadding, buffer.getWidth(), barheight + 35 + buttonheight + buttonpadding), null);
+        text = "End Turn";
+        buffer.drawText(text, buffer.getWidth() - (buttonwidth/2) - (this.paint.measureText(text)/2),  barheight + 45 + (buttonheight/2)+ buttonpadding, this.paint);
 
 
     }
