@@ -21,6 +21,7 @@ public abstract class MenuButton {
     public int width, height;
     public Bitmap bitmap;
     public boolean visible;
+    int delay = 0;
 
     public MenuButton(String text, Bitmap bitmap, int x, int y) {
         this.text = text;
@@ -64,6 +65,10 @@ public abstract class MenuButton {
 
         // Draw text
         buffer.drawText(this.text, x + (this.width / 2) - this.paint.measureText(this.text) / 2, y + (this.height / 2) + this.paint.getTextSize() / 4, this.paint);
+    }
+
+    public void update() {
+        if (delay > 0) --delay;
     }
 
     /**

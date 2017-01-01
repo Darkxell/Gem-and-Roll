@@ -56,6 +56,15 @@ public abstract class GameState {
     public abstract void update();
 
     /**
+     * Updates this State's buttons.
+     */
+    public void updateButtons() {
+        for (MenuButton button : this.buttons) {
+            button.update();
+        }
+    }
+
+    /**
      * Called by the parent when the phone back button is pressed.
      */
     public void onBackPressed() {
@@ -66,7 +75,10 @@ public abstract class GameState {
      */
     public void onTouch(MotionEvent e) {
         for (MenuButton button : this.buttons) {
-            if (button.contains((int) e.getX(), (int) e.getY())) button.onClick();
+            if (button.delay == 0 && button.contains((int) e.getX(), (int) e.getY())){
+                button.onClick();
+                button.delay = 5;
+            }
         }
     }
 

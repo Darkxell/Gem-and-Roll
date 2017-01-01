@@ -248,11 +248,18 @@ public class PlayerSelectionState extends GameState {
 
         this.buttonP3.visible = this.buttonAI3.visible = this.playerCount >= 3;
         this.buttonP4.visible = this.buttonAI4.visible = this.playerCount >= 4;
+
+        this.buttonP1.paint.setTextSize(buffer.getHeight() / 15);
+        this.buttonP2.paint.setTextSize(buffer.getHeight() / 15);
+        this.buttonP3.paint.setTextSize(buffer.getHeight() / 15);
+        this.buttonP4.paint.setTextSize(buffer.getHeight() / 15);
+
         this.needReplace = false;
     }
 
     @Override
     public void update() {
+        this.updateButtons();
     }
 
     @Override
