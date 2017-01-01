@@ -3,10 +3,7 @@ package com.darkxell.gemandroll.gamestates;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
@@ -14,12 +11,15 @@ import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 
 /**
- * Created by Darkxell on 27/12/2016.
+ * Created by Cubi on 01/01/2017.
  */
+public class PlayerSelectionState extends GameState {
 
-public class OptionsState extends GameState {
+    private int bufferWidth, bufferHeight;
+    private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
+    private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
 
-    public OptionsState(MainActivity holder) {
+    public PlayerSelectionState(MainActivity holder) {
         super(holder);
         this.addButton(new MenuButton("Back", button, 20, 20) {
             @Override
@@ -29,18 +29,18 @@ public class OptionsState extends GameState {
         });
     }
 
-    private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
-    private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
-
     @Override
     public void print(Canvas buffer) {
-        buffer.drawBitmap(background, null, new Rect(0, 0, buffer.getWidth(), buffer.getHeight()), null);
+        this.bufferWidth = buffer.getWidth();
+        this.bufferHeight = buffer.getHeight();
+        int imageheight = buffer.getWidth() / background.getWidth() * background.getHeight();
+        buffer.drawBitmap(background, null, new Rect(0, buffer.getHeight() - imageheight, buffer.getWidth(), buffer.getHeight()), null);
+
         this.printButtons(buffer);
     }
 
     @Override
     public void update() {
-
     }
 
     @Override

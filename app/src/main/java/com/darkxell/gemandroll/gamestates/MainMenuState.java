@@ -13,6 +13,7 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.OptionsState;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
+import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
 
@@ -22,19 +23,47 @@ import com.darkxell.gemandroll.mechanics.PlayerAI;
 
 public class MainMenuState extends GameState {
 
+    private static final int PLAY = 0, OPTIONS = 1, REPLAYS = 2;
+
     public MainMenuState(MainActivity holder) {
         super(holder);
-        this.paint = new Paint();
-        this.paint.setColor(Color.BLACK);
-        this.paint.setStyle(Paint.Style.FILL);
+
+        this.addButton(this.buttonPlay = new MenuButton("Play", button, 0, 0) {
+            @Override
+            public void onClick() {
+                onButtonClick(PLAY);
+            }
+        });
+        this.addButton(this.buttonOptions = new MenuButton("Options", button, 0, 0) {
+            @Override
+            public void onClick() {
+                onButtonClick(OPTIONS);
+            }
+        });
+        this.addButton(this.buttonReplays = new MenuButton("Replays", button, 0, 0) {
+            @Override
+            public void onClick() {
+                onButtonClick(REPLAYS);
+            }
+        });
     }
 
-    private Paint paint;
+    private void onButtonClick(int buttonID) {
+        if (buttonID == OPTIONS)
+            super.holder.setState(new OptionsState(super.holder));
+        else if (buttonID == REPLAYS)
+            Log.d("Replays", "Feature not implemented yet, sorry...");
+        else if (buttonID == PLAY)
+            //super.holder.setState(new PlayerSelectionState(super.holder));
+            super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
+    }
+
     private int verticaloffset;
     private int counter;
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.menubackground);
     private Bitmap title = BitmapFactory.decodeResource(holder.getResources(), R.drawable.title);
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
+    private MenuButton buttonPlay, buttonOptions, buttonReplays;
 
     private int bufferwidth, bufferheight;
 
@@ -50,31 +79,35 @@ public class MainMenuState extends GameState {
         if (counter > 145) {
             buffer.drawBitmap(title, (buffer.getWidth() / 2) - (title.getWidth() / 2), (buffer.getHeight() / 3) - (title.getHeight() / 2) - Math.min(counter - 145, 50), null);
 
-            this.paint.setTextSize(buffer.getHeight() / 20);
-            int buttonheight, buttonwidth;
-            buttonwidth = (int) (buffer.getWidth() / 4);
-            buttonheight = buttonwidth * button.getHeight() / button.getWidth();
-            //Display the play button
-            String text = "Play";
-            int left = (buffer.getWidth() / 2) - (buttonwidth / 2), top = 2 * buffer.getHeight() / 3;
-            buffer.drawBitmap(button, null, new Rect(left, top, left + buttonwidth, top + buttonheight), null);
-            buffer.drawText(text, left + (button.getWidth() / 2) - this.paint.measureText(text), top + (button.getHeight() / 2), this.paint);
-
-            //Display the options button
-            text = "Options";
-            left = (buffer.getWidth() / 4) - (buttonwidth / 2);
-            top = 2 * buffer.getHeight() / 3 + 65;
-            buffer.drawBitmap(button, null, new Rect(left, top, left + buttonwidth, top + buttonheight), null);
-            buffer.drawText(text, left + (button.getWidth() / 2) - this.paint.measureText(text), top + (button.getHeight() / 2), this.paint);
-
-            //Display the replays button
-            text = "Replays";
-            left = (3 * buffer.getWidth() / 4) - (buttonwidth / 2);
-            buffer.drawBitmap(button, null, new Rect(left, top, left + buttonwidth, top + buttonheight), null);
-            buffer.drawText(text, left + (button.getWidth() / 2) - this.paint.measureText(text), top + (button.getHeight() / 2), this.paint);
-
+            if (this.buttonPlay.x == 0) this.placeButtons(buffer);
+            this.printButtons(buffer);
         }
 
+    }
+
+    /**
+     * Places and resizes the buttons.
+     */
+    private void placeButtons(Canvas buffer) {
+        int buttonheight, buttonwidth;
+        buttonwidth = (int) (buffer.getWidth() / 4);
+        buttonheight = buttonwidth * button.getHeight() / button.getWidth();
+
+        // Place the play button
+        this.buttonPlay.x = (buffer.getWidth() / 2) - (buttonwidth / 2);
+        this.buttonPlay.y = 2 * buffer.getHeight() / 3;
+
+        // Place the options button
+        this.buttonOptions.x = (buffer.getWidth() / 4) - (buttonwidth / 2);
+        this.buttonOptions.y = 2 * buffer.getHeight() / 3 + 65;
+
+        // Place the replays button
+        this.buttonReplays.x = (3 * buffer.getWidth() / 4) - (buttonwidth / 2);
+        this.buttonReplays.y = this.buttonOptions.y;
+
+        // Set buttons size
+        this.buttonPlay.width = this.buttonOptions.width = this.buttonReplays.width = buttonwidth;
+        this.buttonPlay.height = this.buttonOptions.height = this.buttonReplays.height = buttonheight;
     }
 
     @Override
@@ -84,16 +117,5 @@ public class MainMenuState extends GameState {
             verticaloffset = nofs;
         //Prevent the offset to loop around INTEGER.MAX_VALUE, causing a white flicker in the background.
         ++counter;
-    }
-
-    @Override
-    public void onTouch(MotionEvent e) {
-        if (e.getX() < bufferwidth / 3 && e.getY() > bufferheight / 2)
-            super.holder.setState(new OptionsState(super.holder));
-        else if (e.getX() > bufferwidth - (bufferwidth / 3) && e.getY() > bufferheight / 2)
-            Log.d("Replays", "Feature not implemented yet, sorry...");
-        else if (e.getY() > bufferheight / 2)
-            super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
-
     }
 }
