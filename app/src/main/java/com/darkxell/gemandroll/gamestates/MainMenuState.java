@@ -13,6 +13,8 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.OptionsState;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
+import com.darkxell.gemandroll.mechanics.Player;
+import com.darkxell.gemandroll.mechanics.PlayerAI;
 
 /**
  * Created by Darkxell on 09/12/2016.
@@ -90,7 +92,8 @@ public class MainMenuState extends GameState {
             super.holder.setState(new OptionsState(super.holder));
         else if (e.getX() > bufferwidth - (bufferwidth / 3) && e.getY() > bufferheight / 2)
             Log.d("Replays", "Feature not implemented yet, sorry...");
-        else if (e.getY() > bufferheight / 2) Log.d("Play", "Play");
+        else if (e.getY() > bufferheight / 2)
+            super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
 
     }
 }

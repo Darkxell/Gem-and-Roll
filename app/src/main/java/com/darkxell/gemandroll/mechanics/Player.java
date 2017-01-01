@@ -19,5 +19,35 @@ public class Player {
      */
     private byte AItype = 0;
 
+    /**
+     * creates a new player object
+     */
+    public Player(String name) {
+        this.name = name;
+    }
+
+    /**
+     * creates a new AI player object
+     */
+    public Player(String name, byte ai) {
+        this(name);
+        this.AItype = ai;
+    }
+
+    /**
+     * Gets the score of the player
+     */
+    public int getScore() {
+        return this.gems.length;
+    }
+
+    /**Adds a gem to this player*/
+    public void addGem(Gem g){
+        Gem[] array = new Gem[this.gems.length + 1];
+        System.arraycopy(this.gems, 0, array, 0, this.gems.length);
+        array[array.length] = g;
+        this.gems = array;
+    }
+
 
 }
