@@ -41,6 +41,7 @@ public abstract class MenuButton {
      * @return True if this Button contains the point of coordinates (x, y).
      */
     public boolean contains(int x, int y) {
+        if (!this.visible) return false;
        return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height;
     }
 
