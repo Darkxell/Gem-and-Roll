@@ -15,8 +15,7 @@ import com.darkxell.gemandroll.R;
 
 public abstract class MenuButton {
 
-    private static Paint paint;
-
+    public Paint paint;
     public String text;
     public int x, y;
     public int width, height;
@@ -35,6 +34,7 @@ public abstract class MenuButton {
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
         this.paint.setStyle(Paint.Style.FILL);
+        this.paint.setTextSize(1);
     }
 
     /**
@@ -52,16 +52,17 @@ public abstract class MenuButton {
         if (!this.visible) return;
 
         // Set default size
-        if (this.width == -1 && this.height == -1) {
-            this.width = (int) (buffer.getWidth() / 4);
-            this.height = this.width * this.bitmap.getHeight() / this.bitmap.getWidth();
+        if (this.width == -1) {
+            if (this.height == -1) this.width = (int) (buffer.getWidth() / 4);
+            else this.width = this.height / this.bitmap.getHeight() * this.bitmap.getWidth();
         }
+        if (this.height == -1) this.height = this.width * this.bitmap.getHeight() / this.bitmap.getWidth();
+        if (this.paint.getTextSize() == 1) this.paint.setTextSize(buffer.getHeight() / 20);
 
         // Draw bitmap
         buffer.drawBitmap(bitmap, null, new Rect(x, y, x + this.width, y + this.height), null);
 
         // Draw text
-        this.paint.setTextSize(buffer.getHeight() / 20);
         buffer.drawText(this.text, x + (this.width / 2) - this.paint.measureText(this.text) / 2, y + (this.height / 2) + this.paint.getTextSize() / 4, this.paint);
     }
 

@@ -54,8 +54,8 @@ public class MainMenuState extends GameState {
         else if (buttonID == REPLAYS)
             Log.d("Replays", "Feature not implemented yet, sorry...");
         else if (buttonID == PLAY)
-            //super.holder.setState(new PlayerSelectionState(super.holder));
-            super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
+            super.holder.setState(new PlayerSelectionState(super.holder));
+            //super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
     }
 
     private int verticaloffset;
