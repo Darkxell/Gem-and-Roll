@@ -76,6 +76,7 @@ public class RecursiveGameState extends GameState {
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
     private Bitmap heartfull = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_full);
     private Bitmap heartempty = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_empty);
+    private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
 
     private Bitmap borderv = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_borderv);
     private Bitmap bordert = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_bordert);
@@ -110,9 +111,9 @@ public class RecursiveGameState extends GameState {
         }
 
         //Draws the player name
-        String text = "Player name here";
+        String text = this.players[this.nowplaying].name;
         this.paint.setTextSize(buffer.getHeight() / 20);
-        buffer.drawText(text, verticle + 80, barheight + 100, this.paint);
+        buffer.drawText(text, verticle + 80, ((barheight + 20) + heartheight) / 2, this.paint);
 
 
         //Draws the reroll and endturn buttons
@@ -120,17 +121,30 @@ public class RecursiveGameState extends GameState {
         int buttonheight = (button.getHeight() * buttonwidth) / button.getWidth();
         buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, barheight + 35, buffer.getWidth(), barheight + 35 + buttonheight), null);
         text = "Reroll";
-        buffer.drawText(text, buffer.getWidth() - (buttonwidth/2) - (this.paint.measureText(text)/2),  barheight + 45 + (buttonheight/2), this.paint);
+        buffer.drawText(text, buffer.getWidth() - (buttonwidth / 2) - (this.paint.measureText(text) / 2), barheight + 45 + (buttonheight / 2), this.paint);
         int buttonpadding = buttonheight + 30;
         buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, barheight + 35 + buttonpadding, buffer.getWidth(), barheight + 35 + buttonheight + buttonpadding), null);
         text = "End Turn";
-        buffer.drawText(text, buffer.getWidth() - (buttonwidth/2) - (this.paint.measureText(text)/2),  barheight + 45 + (buttonheight/2)+ buttonpadding, this.paint);
+        buffer.drawText(text, buffer.getWidth() - (buttonwidth / 2) - (this.paint.measureText(text) / 2), barheight + 45 + (buttonheight / 2) + buttonpadding, this.paint);
 
 
         //Draws the list of players and their score on the top right
-        for(int i = 0;i < players.length;++i){
-
-        }
+        int containerWidth = buffer.getWidth() / 4, contenerHeight = namebar.getHeight() * containerWidth / namebar.getWidth();
+        int offset = 30;
+        for (int i = this.nowplaying; i < players.length; ++i)
+            if (offset + contenerHeight < barheight) {
+                buffer.drawBitmap(namebar, null, new Rect(buffer.getWidth() - containerWidth, offset, buffer.getWidth(), offset + contenerHeight), null);
+                text = this.players[i].getScore() + " : " + this.players[i].name;
+                buffer.drawText(text, buffer.getWidth() - containerWidth + (containerWidth / 5), offset + (contenerHeight / 2), this.paint);
+                offset += 30 + contenerHeight;
+            }
+        for (int i = 0; i < this.nowplaying; ++i)
+            if (offset + contenerHeight < barheight) {
+                buffer.drawBitmap(namebar, null, new Rect(buffer.getWidth() - containerWidth, offset, buffer.getWidth(), offset + contenerHeight), null);
+                text = this.players[i].getScore() + " : " + this.players[i].name;
+                buffer.drawText(text, buffer.getWidth() - containerWidth + (containerWidth / 5), offset + (contenerHeight / 2), this.paint);
+                offset += 30 + contenerHeight;
+            }
 
     }
 
