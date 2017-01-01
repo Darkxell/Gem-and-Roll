@@ -1,8 +1,12 @@
 package com.darkxell.gemandroll;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import com.darkxell.gemandroll.gamestates.TestState;
 import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
@@ -21,6 +25,7 @@ public class MainActivity extends Activity {
      */
     private static final int UPS = 30;
     private CustomView view;
+    public InputMethodManager keyboard;
 
     private Updater updater;
 
@@ -56,6 +61,21 @@ public class MainActivity extends Activity {
                 }
             }
         };
+    }
+
+    public void showKeyboard() {
+        this.keyboard = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        this.keyboard.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    public void hideKeyboard() {
+        this.keyboard.hideSoftInputFromWindow(this.view.getWindowToken(), 0);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        this.currentstate.onKeyTyped(keyCode, (char) event.getUnicodeChar());
+        return super.onKeyDown(keyCode, event);
     }
 
     /**

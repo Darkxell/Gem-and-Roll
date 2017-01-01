@@ -13,13 +13,15 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
+import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
+import com.darkxell.gemandroll.gamestates.statesutility.TextInputState;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
 
 /**
  * Created by Cubi on 01/01/2017.
  */
-public class PlayerSelectionState extends GameState {
+public class PlayerSelectionState extends GameState implements TextInputListener {
 
     private static final int MAX_PLAYERS = 4;
 
@@ -44,6 +46,7 @@ public class PlayerSelectionState extends GameState {
     private boolean[] isAI = new boolean[MAX_PLAYERS];
     private boolean needReplace = true;
     private String[] names;
+    private int editingPlayerName = 0;
 
     public PlayerSelectionState(MainActivity holder) {
         super(holder);
@@ -106,21 +109,25 @@ public class PlayerSelectionState extends GameState {
         this.addButton(this.buttonP1 = new MenuButton(names[0], namebar, 0, 0) {
             @Override
             public void onClick() {
+                editName(0);
             }
         });
         this.addButton(this.buttonP2 = new MenuButton(names[1], namebar, 0, 0) {
             @Override
             public void onClick() {
+                editName(1);
             }
         });
         this.addButton(this.buttonP3 = new MenuButton(names[2], namebar, 0, 0) {
             @Override
             public void onClick() {
+                editName(2);
             }
         });
         this.addButton(this.buttonP4 = new MenuButton(names[3], namebar, 0, 0) {
             @Override
             public void onClick() {
+                editName(3);
             }
         });
 
@@ -160,11 +167,20 @@ public class PlayerSelectionState extends GameState {
     }
 
     /**
+     * Called when the user clicks on a Player name.
+     * @param player - The player number.
+     */
+    private void editName(int player) {
+        this.editingPlayerName = player;
+        super.holder.setState(new TextInputState(super.holder, this, this.names[player]));
+    }
+
+    /**
      * Called when user clicks on Start.
      */
     private void startGame() {
         Player[] players = new Player[this.playerCount];
-        for (int i = 0; i < this.isAI.length; ++i) players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
+        for (int i = 0; i < players.length; ++i) players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
         super.holder.setState(new RecursiveGameState(super.holder, players));
     }
 
@@ -265,5 +281,21 @@ public class PlayerSelectionState extends GameState {
     @Override
     public void onBackPressed() {
         super.holder.setState(new MainMenuState(super.holder));
+    }
+
+    @Override
+    public void onInput(String textInput) {
+        this.names[this.editingPlayerName] = textInput;
+        if (this.editingPlayerName == 0) this.buttonP1.text = this.names[0];
+        if (this.editingPlayerName == 1) this.buttonP2.text = this.names[1];
+        if (this.editingPlayerName == 2) this.buttonP3.text = this.names[2];
+        if (this.editingPlayerName == 3) this.buttonP4.text = this.names[3];
+
+        super.holder.setState(this);
+    }
+
+    @Override
+    public void cancelInput() {
+        super.holder.setState(this);
     }
 }

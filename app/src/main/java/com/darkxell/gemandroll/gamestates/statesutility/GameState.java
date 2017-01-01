@@ -88,4 +88,12 @@ public abstract class GameState {
     public void setParent(MainActivity holder) {
         this.holder = holder;
     }
+
+    /**
+     * Called by the parent when keyboard keys are pressed.
+     * @param keyCode - The ID of the key.
+     * @param unicodeChar - The char value of the key.
+     */
+    public void onKeyTyped(int keyCode, char unicodeChar) {
+    }
 }
