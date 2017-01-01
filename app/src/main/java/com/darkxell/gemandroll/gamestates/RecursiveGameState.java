@@ -65,6 +65,7 @@ public class RecursiveGameState extends GameState {
     private Paint paint;
 
     private Player[] players;
+    private int nowplaying;
     private SeededRNG generator;
     private Dice[] pouch, rolled, hand;
     int stateiteration = 0;
@@ -125,6 +126,11 @@ public class RecursiveGameState extends GameState {
         text = "End Turn";
         buffer.drawText(text, buffer.getWidth() - (buttonwidth/2) - (this.paint.measureText(text)/2),  barheight + 45 + (buttonheight/2)+ buttonpadding, this.paint);
 
+
+        //Draws the list of players and their score on the top right
+        for(int i = 0;i < players.length;++i){
+
+        }
 
     }
 

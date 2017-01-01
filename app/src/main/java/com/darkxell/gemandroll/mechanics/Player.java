@@ -45,7 +45,7 @@ public class Player {
     public void addGem(Gem g){
         Gem[] array = new Gem[this.gems.length + 1];
         System.arraycopy(this.gems, 0, array, 0, this.gems.length);
-        array[array.length] = g;
+        array[array.length-1] = g;
         this.gems = array;
     }
 
