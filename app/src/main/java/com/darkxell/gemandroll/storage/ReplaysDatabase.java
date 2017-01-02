@@ -16,6 +16,7 @@ class ReplaysDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE categorie(replay TEXT);");
 }
 
     @Override
