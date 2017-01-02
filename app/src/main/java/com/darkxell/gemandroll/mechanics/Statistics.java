@@ -10,13 +10,15 @@ public class Statistics {
 
     public static enum Stat {
 
+        DEATHS_ROW("Deaths in a row"),
+        DICES_ROLLED("Dices rolled"),
         GAME_COUNT("Games played"),
         GEM_COUNT("Gems collected"),
+        HIGH_SCORE("High score"),
         HURT_COUNT("Traps activated"),
         REROLL_COUNT("Pickaxes found"),
-        DICES_ROLLED("Dices rolled"),
-        HIGH_SCORE("High score"),
-        TOTAL_SCORE("Total score");
+        TOTAL_SCORE("Total score"),
+        TOTAL_DEATHS("Total deaths");
 
         public final String name;
 
@@ -50,7 +52,7 @@ public class Statistics {
      */
     public void setStatValue(Stat stat, int value) {
         this.statistics.put(stat, value);
-        //TODO trigger achievements
+        Achievement.triggerAchievements(stat);
     }
 
 }
