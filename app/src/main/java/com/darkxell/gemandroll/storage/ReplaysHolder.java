@@ -54,7 +54,7 @@ public abstract class ReplaysHolder {
      * Loads the replays from the database to this class and overrides this class data.
      */
     public static void load(Context context) {
-        database = new ReplaysDatabase(context, "replays", null, 1);
+        database = new ReplaysDatabase(context, "replays", null, 2);
 
         SQLiteDatabase d = database.getReadableDatabase();
         ArrayList<Replay> data = new ArrayList<>();
