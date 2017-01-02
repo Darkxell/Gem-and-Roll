@@ -14,8 +14,10 @@ import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.OptionsState;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
+import com.darkxell.gemandroll.mechanics.Achievement;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
+import com.darkxell.gemandroll.mechanics.Statistics;
 
 /**
  * Created by Darkxell on 09/12/2016.
@@ -31,10 +33,6 @@ public class MainMenuState extends GameState {
 
     public MainMenuState(MainActivity holder) {
         super(holder);
-
-        if (hasOpenedOnce)
-            this.counter = 146;
-        else hasOpenedOnce = true;
 
         this.addButton(this.buttonPlay = new MenuButton("Play", button, 0, 0) {
             @Override
@@ -57,6 +55,7 @@ public class MainMenuState extends GameState {
     }
 
     private void onButtonClick(int buttonID) {
+        Statistics.instance.setStatValue(Statistics.Stat.HIGH_SCORE, Statistics.instance.getStatValue(Statistics.Stat.HIGH_SCORE) + 5);
         if (buttonID == OPTIONS)
             super.holder.setState(new OptionsState(super.holder));
         else if (buttonID == REPLAYS)
@@ -84,11 +83,13 @@ public class MainMenuState extends GameState {
             buffer.drawBitmap(background, null, new Rect(0, buffer.getHeight() - imageheight, buffer.getWidth(), buffer.getHeight()), null);
         else
             buffer.drawBitmap(background, null, new Rect(0, -verticaloffset, buffer.getWidth(), imageheight - verticaloffset), null);
-        if (counter > 145) {
+
+        if (counter > 145 || hasOpenedOnce) {
+            if (!hasOpenedOnce) hasOpenedOnce = true;
             buffer.drawBitmap(title, (buffer.getWidth() / 2) - (title.getWidth() / 2), (buffer.getHeight() / 3) - (title.getHeight() / 2) - Math.min(counter - 145, 50), null);
 
             if (this.buttonPlay.x == 0) this.placeButtons(buffer);
-            this.printButtons(buffer);
+            this.printUI(buffer);
         }
 
     }
@@ -120,12 +121,13 @@ public class MainMenuState extends GameState {
 
     @Override
     public void update() {
-        if (counter > 145) {
+        if (counter < 146) {
             int nofs = verticaloffset + 1 + verticaloffset / 30;
             if (nofs < Integer.MAX_VALUE / 2)
                 verticaloffset = nofs;
         }
         //Prevent the offset to loop around INTEGER.MAX_VALUE, causing a white flicker in the background.
         ++counter;
+        this.updateUI();
     }
 }

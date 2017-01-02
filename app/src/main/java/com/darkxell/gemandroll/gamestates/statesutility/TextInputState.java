@@ -86,10 +86,11 @@ public class TextInputState extends GameState {
             this.text.paint.setTextSize(buffer.getHeight() / 10);
         }
 
-        this.printButtons(buffer);
+        this.printUI(buffer);
     }
 
     @Override
     public void update() {
+        this.updateUI();
     }
 }

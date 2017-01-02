@@ -1,5 +1,7 @@
 package com.darkxell.gemandroll.mechanics;
 
+import com.darkxell.gemandroll.gamestates.statesutility.GameState;
+
 /**
  * Created by Cubi on 02/01/2017.
  */
@@ -52,9 +54,7 @@ public enum Achievement {
      */
     public void setAcquired(boolean acquired, boolean warnUser) {
         this.isAcquired = acquired;
-        if (warnUser) {
-            //TODO warn user
-        }
+        if (warnUser) GameState.showAchievement(this);
     }
 
     /**

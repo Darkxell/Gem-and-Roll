@@ -209,7 +209,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         text = "CPU";
         buffer.drawText(text, this.buttonAI1.x + this.buttonAI1.width / 2 - this.paint.measureText(text) / 2, y * 3, this.paint);
 
-        this.printButtons(buffer);
+        this.printUI(buffer);
     }
 
     /**
@@ -276,7 +276,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
 
     @Override
     public void update() {
-        this.updateButtons();
+        this.updateUI();
     }
 
     @Override

@@ -35,12 +35,12 @@ public class OptionsState extends GameState {
     @Override
     public void print(Canvas buffer) {
         buffer.drawBitmap(background, null, new Rect(0, 0, buffer.getWidth(), buffer.getHeight()), null);
-        this.printButtons(buffer);
+        this.printUI(buffer);
     }
 
     @Override
     public void update() {
-
+        this.updateUI();
     }
 
     @Override

@@ -44,7 +44,7 @@ public class Statistics {
      */
     public int getStatValue(Stat stat) {
         if (this.statistics.containsKey(stat)) return this.statistics.get(stat);
-        return -1;
+        return 0;
     }
 
     /**
