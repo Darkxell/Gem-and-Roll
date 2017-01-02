@@ -14,6 +14,7 @@ import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
 import com.darkxell.gemandroll.gamestates.statesutility.Updater;
 import com.darkxell.gemandroll.storage.ReplaysHolder;
+import com.darkxell.gemandroll.storage.Storage;
 
 public class MainActivity extends Activity {
 
@@ -38,6 +39,7 @@ public class MainActivity extends Activity {
         setContentView(view);
         createUpdaters();
         ReplaysHolder.load(getApplicationContext());
+        Storage.instance = new Storage(getApplicationContext());
     }
 
     /**
