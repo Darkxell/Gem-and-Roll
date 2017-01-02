@@ -13,6 +13,7 @@ import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
 import com.darkxell.gemandroll.gamestates.statesutility.Updater;
+import com.darkxell.gemandroll.storage.ReplaysHolder;
 
 public class MainActivity extends Activity {
 
@@ -36,6 +37,7 @@ public class MainActivity extends Activity {
         this.view.setState(currentstate = new MainMenuState(this));
         setContentView(view);
         createUpdaters();
+        ReplaysHolder.load(getApplicationContext());
     }
 
     /**
