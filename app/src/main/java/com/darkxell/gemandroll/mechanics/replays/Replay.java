@@ -1,5 +1,8 @@
 package com.darkxell.gemandroll.mechanics.replays;
 
+import android.support.annotation.Nullable;
+import android.util.Log;
+
 /**
  * Created by Darkxell on 25/12/2016.
  */
@@ -37,5 +40,26 @@ public class Replay {
 
     public String serialize() {
         return this.toString();
+    }
+
+    public static Replay unserialize(String data) {
+        Replay toreturn = new Replay();
+
+        try {
+            data = data.substring("REPLAY=names:".length());
+            toreturn.playernames = data.substring(0, data.indexOf(":turns:")).split(",");
+            toreturn.seed = Long.decode(data.substring(data.indexOf(":seed:") + ":seed:".length(), data.length() - ":".length()));
+
+            String[] turnsData = data.substring(data.indexOf(":turns:") + ":turns:".length(), data.indexOf(":seed:")).split(",");
+            toreturn.turns = new int[turnsData.length];
+            for (int i = 0; i < toreturn.turns.length; ++i)
+                toreturn.turns[i] = Integer.parseInt(turnsData[i]);
+
+        } catch (Exception e) {
+            Log.d("Replays", "Wrong replay format: " + data);
+            return null;
+        }
+
+        return toreturn;
     }
 }

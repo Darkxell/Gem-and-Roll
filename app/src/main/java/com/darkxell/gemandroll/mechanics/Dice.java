@@ -36,8 +36,8 @@ public class Dice {
      * Roll this dice using the wanted random number generator. Will randomely roll if the generator is null. Also returns the result of the roll.
      */
     public byte roll(SeededRNG generator) {
-        //TODO
-        return UNROLLED;
+        this.face = this.faces[generator.getRandomInt(0, this.faces.length - 1)];
+        return this.getFace();
     }
 
     public int getColor() {

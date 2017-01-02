@@ -24,9 +24,17 @@ import com.darkxell.gemandroll.mechanics.PlayerAI;
 public class MainMenuState extends GameState {
 
     private static final int PLAY = 0, OPTIONS = 1, REPLAYS = 2;
+    /**
+     * True if the Main Menu animation has played already. If so, it will not play again.
+     */
+    private static boolean hasOpenedOnce = false;
 
     public MainMenuState(MainActivity holder) {
         super(holder);
+
+        if (hasOpenedOnce)
+            this.counter = 146;
+        else hasOpenedOnce = true;
 
         this.addButton(this.buttonPlay = new MenuButton("Play", button, 0, 0) {
             @Override
@@ -112,9 +120,11 @@ public class MainMenuState extends GameState {
 
     @Override
     public void update() {
-        int nofs = verticaloffset + 1 + verticaloffset / 30;
-        if (nofs < Integer.MAX_VALUE / 2)
-            verticaloffset = nofs;
+        if (counter > 145) {
+            int nofs = verticaloffset + 1 + verticaloffset / 30;
+            if (nofs < Integer.MAX_VALUE / 2)
+                verticaloffset = nofs;
+        }
         //Prevent the offset to loop around INTEGER.MAX_VALUE, causing a white flicker in the background.
         ++counter;
     }

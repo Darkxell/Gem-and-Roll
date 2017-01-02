@@ -17,6 +17,7 @@ import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputState;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
+import com.darkxell.gemandroll.mechanics.RandomNameGenerator;
 
 /**
  * Created by Cubi on 01/01/2017.
@@ -52,7 +53,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         super(holder);
 
         this.names = new String[MAX_PLAYERS];
-        for (int i = 0; i < names.length; ++i) names[i] = "Player " + (i + 1);
+        for (int i = 0; i < names.length; ++i) names[i] = RandomNameGenerator.getRandomName();
 
         this.createButtons();
         this.paint = new Paint();

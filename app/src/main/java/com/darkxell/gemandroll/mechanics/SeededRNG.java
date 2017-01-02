@@ -22,6 +22,7 @@ public class SeededRNG {
      * Creates a new SeededRNG with the wanted seed.
      */
     public SeededRNG(long seed) {
+        this.seed = seed;
         this.rand = new Random(seed);
     }
 
