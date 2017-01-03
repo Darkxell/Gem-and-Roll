@@ -8,14 +8,14 @@ import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 
 public enum Achievement {
 
-    BEST_SCORE("Hacker", Statistics.Stat.HIGH_SCORE, 25),
-    ONE_DEATH("Too greedy", Statistics.Stat.TOTAL_DEATHS, 1),
-    ONE_GAME("Expedition complete", Statistics.Stat.HIGH_SCORE, 13);
+    BEST_SCORE("Hacker", "Get a score of 27.", Statistics.Stat.HIGH_SCORE, 25),
+    ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
+    ONE_GAME("Expedition complete", "Win a game.", Statistics.Stat.HIGH_SCORE, 13);
 
     /**
-     * This achievement's name.
+     * This achievement's name and description.
      */
-    public final String name;
+    public final String name, description;
     /**
      * The stat this Achievement checks.
      */
@@ -29,8 +29,9 @@ public enum Achievement {
      */
     private boolean isAcquired = false;
 
-    private Achievement(String name, Statistics.Stat statToCheck, int valueToReach) {
+    private Achievement(String name, String description, Statistics.Stat statToCheck, int valueToReach) {
         this.name = name;
+        this.description = description;
         this.statToCheck = statToCheck;
         this.valueToReach = valueToReach;
     }

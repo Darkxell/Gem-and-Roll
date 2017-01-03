@@ -37,6 +37,13 @@ public class Dice {
      */
     public byte roll(SeededRNG generator) {
         this.face = this.faces[generator.getRandomInt(0, this.faces.length - 1)];
+
+        Statistics s = Statistics.instance;
+        s.setStatValue(Statistics.Stat.DICES_ROLLED, s.getStatValue(Statistics.Stat.DICES_ROLLED) + 1);
+        if (this.face == GEM) s.setStatValue(Statistics.Stat.GEM_COUNT, s.getStatValue(Statistics.Stat.GEM_COUNT) + 1);
+        if (this.face == REROLL) s.setStatValue(Statistics.Stat.REROLL_COUNT, s.getStatValue(Statistics.Stat.REROLL_COUNT) + 1);
+        if (this.face == HURT) s.setStatValue(Statistics.Stat.HURT_COUNT, s.getStatValue(Statistics.Stat.HURT_COUNT) + 1);
+
         return this.getFace();
     }
 
