@@ -112,6 +112,7 @@ public class RecursiveGameState extends GameState {
     private Bitmap heartempty = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_empty);
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
     private Bitmap namebar_ai = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
+    private Bitmap namebar_full = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_textinput);
 
     private Bitmap borderv = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_borderv);
     private Bitmap bordert = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_bordert);
@@ -131,6 +132,7 @@ public class RecursiveGameState extends GameState {
         }
     };
     private MenuButton[] buttonsPlayers;
+    private MenuButton buttonCurrentPlayer;
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
 
     // Display logic
@@ -140,7 +142,14 @@ public class RecursiveGameState extends GameState {
     private void createUI() {
         this.buttonsPlayers = new MenuButton[this.players.length];
         for (int i = 0; i < this.players.length; ++i)
-            this.buttonsPlayers[i] = new MenuButton.Label(this.players[i].name, this.players[i].isAI() ? namebar_ai : namebar);
+            this.addButton(this.buttonsPlayers[i] = new MenuButton.Label(this.players[i].name + " : " + this.players[i].getScore(), i == this.nowplaying ? namebar_ai : namebar));
+
+        this.addButton(this.buttonCurrentPlayer = new MenuButton.Label(this.players[this.nowplaying].name, namebar_full));
+        this.addButton(this.buttonReroll);
+        this.addButton(this.buttonEndTurn);
+        this.addButton(this.buttonHeart1);
+        this.addButton(this.buttonHeart2);
+        this.addButton(this.buttonHeart3);
     }
 
     @Override
@@ -151,61 +160,15 @@ public class RecursiveGameState extends GameState {
         if (this.buttonEndTurn.x == 0) this.placeUI(buffer);
 
         // Draws the bars splitting the screen.
-        int barthickness = buffer.getHeight() / 20;
+        int barthickness = this.height / 20;
         int barlength = borderh.getWidth() * borderh.getHeight() / barthickness;
-        for (int x = 0; x < buffer.getWidth(); x += barlength)
+        for (int x = 0; x < this.width; x += barlength)
             buffer.drawBitmap(borderh, null, new Rect(x, this.verticalSplit, x + barlength, this.verticalSplit + barthickness), null);
 
         barlength = borderv.getWidth() * borderv.getHeight() / barthickness;
-        for (int y = this.verticalSplit + barthickness / 2; y < buffer.getHeight(); y += barlength)
+        for (int y = this.verticalSplit + barthickness / 2; y < this.height; y += barlength)
             buffer.drawBitmap(borderv, null, new Rect(this.horizontalSplit, y, this.horizontalSplit + barthickness, y + barlength), null);
         buffer.drawBitmap(bordert, null, new Rect(this.horizontalSplit, this.verticalSplit, this.horizontalSplit + barthickness, this.verticalSplit + barthickness), null);
-
-        //draws the hearts
-        int health = 3;
-        for (int i = 0; i < this.rolled.length; ++i)
-            if (this.rolled[i].getFace() == Dice.HURT) --health;
-        int heartheight = 10 * buffer.getHeight() / 12, spritesize = buffer.getHeight() / 6;
-        for (int i = 0; i < 3; ++i) {
-            int offset = i * (spritesize + 30);
-            buffer.drawBitmap((health >= i) ? heartfull : heartempty, null, new Rect(this.horizontalSplit + 70 + offset, heartheight, this.horizontalSplit + 70 + spritesize + offset, heartheight + spritesize), null);
-        }
-
-        //Draws the player name
-        String text = this.players[this.nowplaying].name;
-        this.paint.setTextSize(buffer.getHeight() / 20);
-        buffer.drawText(text, this.horizontalSplit + 80, ((this.verticalSplit + 20) + heartheight) / 2, this.paint);
-
-
-        //Draws the reroll and endturn buttons
-        int buttonwidth = buffer.getWidth() - (this.horizontalSplit + 40 + (3 * (spritesize + 30)));
-        int buttonheight = (button.getHeight() * buttonwidth) / button.getWidth();
-        buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, this.verticalSplit + 35, buffer.getWidth(), this.verticalSplit + 35 + buttonheight), null);
-        text = "Reroll";
-        buffer.drawText(text, buffer.getWidth() - (buttonwidth / 2) - (this.paint.measureText(text) / 2), this.verticalSplit + 45 + (buttonheight / 2), this.paint);
-        int buttonpadding = buttonheight + 30;
-        buffer.drawBitmap(button, null, new Rect(buffer.getWidth() - buttonwidth, this.verticalSplit + 35 + buttonpadding, buffer.getWidth(), this.verticalSplit + 35 + buttonheight + buttonpadding), null);
-        text = "End Turn";
-        buffer.drawText(text, buffer.getWidth() - (buttonwidth / 2) - (this.paint.measureText(text) / 2), this.verticalSplit + 45 + (buttonheight / 2) + buttonpadding, this.paint);
-
-
-        //Draws the list of players and their score on the top right
-        int containerWidth = buffer.getWidth() / 4, contenerHeight = namebar.getHeight() * containerWidth / namebar.getWidth();
-        int offset = 30;
-        for (int i = this.nowplaying; i < players.length; ++i)
-            if (offset + contenerHeight < this.verticalSplit) {
-                buffer.drawBitmap(namebar, null, new Rect(buffer.getWidth() - containerWidth, offset, buffer.getWidth(), offset + contenerHeight), null);
-                text = this.players[i].getScore() + " : " + this.players[i].name;
-                buffer.drawText(text, buffer.getWidth() - containerWidth + (containerWidth / 5), offset + (contenerHeight / 2), this.paint);
-                offset += 30 + contenerHeight;
-            }
-        for (int i = 0; i < this.nowplaying; ++i)
-            if (offset + contenerHeight < this.verticalSplit) {
-                buffer.drawBitmap(namebar, null, new Rect(buffer.getWidth() - containerWidth, offset, buffer.getWidth(), offset + contenerHeight), null);
-                text = this.players[i].getScore() + " : " + this.players[i].name;
-                buffer.drawText(text, buffer.getWidth() - containerWidth + (containerWidth / 5), offset + (contenerHeight / 2), this.paint);
-                offset += 30 + contenerHeight;
-            }
 
         this.printUI(buffer);
 
@@ -215,8 +178,42 @@ public class RecursiveGameState extends GameState {
      * Places and resizes UI.
      */
     private void placeUI(Canvas buffer) {
+
+        // Get Buffer dimensions
+        this.width = buffer.getWidth();
+        this.height = buffer.getHeight();
+
         this.verticalSplit = 2 * buffer.getHeight() / 3;
         this.horizontalSplit = buffer.getWidth() * 2 / 5;
+
+        // Place the Player names UI
+        int buttonWidth = this.width / 4;
+        int pad = this.horizontalSplit / (this.players.length * 2 + 1);
+        int pos = pad / 2;
+        for (int i = 0; i < this.players.length; ++i) {
+            this.buttonsPlayers[i].x = this.width - buttonWidth;
+            this.buttonsPlayers[i].y = pos;
+            this.buttonsPlayers[i].width = buttonWidth;
+            pos += pad * 2;
+        }
+
+        // Place the Player turn UI
+        int buttonHeight = (this.height - this.verticalSplit) / 2 - (this.height - this.verticalSplit) / 12;
+        buttonWidth = (this.width - this.horizontalSplit) / 5;
+        int buttonSize = Math.min(buttonHeight, buttonWidth);
+        pad = buttonWidth / 5;
+        pos = this.horizontalSplit + pad + buttonWidth / 2 - buttonSize / 2;
+        this.buttonHeart1.x = this.buttonCurrentPlayer.x = pos;
+        pos += pad + buttonWidth;
+        this.buttonHeart2.x = pos;
+        pos += pad + buttonWidth;
+        this.buttonHeart3.x = pos;
+        pos += pad + buttonWidth;
+        this.buttonReroll.x = this.buttonEndTurn.x = pos;
+        this.buttonCurrentPlayer.y = this.buttonReroll.y = this.verticalSplit + (this.height - this.verticalSplit) / 4;
+        this.buttonHeart1.y = this.buttonHeart2.y = this.buttonHeart3.y =  this.buttonEndTurn.y = this.buttonCurrentPlayer.y + (this.height - this.verticalSplit) / 2;
+        this.buttonHeart1.width = this.buttonHeart2.width = this.buttonHeart3.width = this.buttonReroll.width = this.buttonEndTurn.width = buttonSize;
+        this.buttonCurrentPlayer.width = buttonWidth * 3;
     }
 
     @Override
