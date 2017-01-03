@@ -132,7 +132,6 @@ public class RecursiveGameState extends GameState {
         }
     };
     private MenuButton[] buttonsPlayers;
-    private MenuButton buttonCurrentPlayer;
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
 
     // Display logic
@@ -144,7 +143,6 @@ public class RecursiveGameState extends GameState {
         for (int i = 0; i < this.players.length; ++i)
             this.addButton(this.buttonsPlayers[i] = new MenuButton.Label(this.players[i].name + " : " + this.players[i].getScore(), i == this.nowplaying ? namebar_ai : namebar));
 
-        this.addButton(this.buttonCurrentPlayer = new MenuButton.Label(this.players[this.nowplaying].name, namebar_full));
         this.addButton(this.buttonReroll);
         this.addButton(this.buttonEndTurn);
         this.addButton(this.buttonHeart1);
@@ -198,22 +196,23 @@ public class RecursiveGameState extends GameState {
         }
 
         // Place the Player turn UI
-        int buttonHeight = (this.height - this.verticalSplit) / 2 - (this.height - this.verticalSplit) / 12;
-        buttonWidth = (this.width - this.horizontalSplit) / 5;
+        int buttonHeight = this.height - this.verticalSplit * 5 / 6;
+        buttonWidth = (this.width - this.horizontalSplit) / 6;
         int buttonSize = Math.min(buttonHeight, buttonWidth);
         pad = buttonWidth / 5;
-        pos = this.horizontalSplit + pad + buttonWidth / 2 - buttonSize / 2;
-        this.buttonHeart1.x = this.buttonCurrentPlayer.x = pos;
+        pos = this.horizontalSplit + pad * 3 / 2 + buttonWidth / 2 - buttonSize / 2;
+        this.buttonHeart1.x = pos;
         pos += pad + buttonWidth;
         this.buttonHeart2.x = pos;
         pos += pad + buttonWidth;
         this.buttonHeart3.x = pos;
         pos += pad + buttonWidth;
         this.buttonReroll.x = this.buttonEndTurn.x = pos;
-        this.buttonCurrentPlayer.y = this.buttonReroll.y = this.verticalSplit + (this.height - this.verticalSplit) / 4;
-        this.buttonHeart1.y = this.buttonHeart2.y = this.buttonHeart3.y =  this.buttonEndTurn.y = this.buttonCurrentPlayer.y + (this.height - this.verticalSplit) / 2;
-        this.buttonHeart1.width = this.buttonHeart2.width = this.buttonHeart3.width = this.buttonReroll.width = this.buttonEndTurn.width = buttonSize;
-        this.buttonCurrentPlayer.width = buttonWidth * 3;
+        this.buttonReroll.y = this.verticalSplit + (this.height - this.verticalSplit) / 8;
+        this.buttonEndTurn.y = this.buttonReroll.y + (this.height - this.verticalSplit) / 2;
+        this.buttonHeart1.y = this.buttonHeart2.y = this.buttonHeart3.y = this.verticalSplit + (this.height - this.verticalSplit) / 2 - buttonSize / 2;
+        this.buttonHeart1.width = this.buttonHeart2.width = this.buttonHeart3.width = buttonSize;
+        this.buttonReroll.width = this.buttonEndTurn.width = buttonSize * 2 + pad;
     }
 
     @Override
