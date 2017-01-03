@@ -114,6 +114,10 @@ public class RecursiveGameState extends GameState {
      * A timer for animations.
      */
     private int stateTimer = 0;
+    /**
+     * True if the game is paused.
+     */
+    private boolean isPaused = false;
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -144,6 +148,7 @@ public class RecursiveGameState extends GameState {
     private MenuButton[] buttonsPlayers;
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
     private MenuButton buttonCurrentPlayer;
+    private MenuButton buttonContinue, buttonExit;
 
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
@@ -159,7 +164,29 @@ public class RecursiveGameState extends GameState {
         this.addButton(this.buttonHeart1);
         this.addButton(this.buttonHeart2);
         this.addButton(this.buttonHeart3);
+        this.addButton(this.buttonContinue = new MenuButton("Continue", button) {
+            @Override
+            public void onClick() {
+                onBackPressed();
+            }
+        });
+        this.addButton(this.buttonExit = new MenuButton("Exit", button) {
+            @Override
+            public void onClick() {
+                onExit();
+            }
+        });
         this.buttonCurrentPlayer = new MenuButton.Label(this.players[this.nowplaying].name + "'s Turn", namebar_full);
+
+        this.buttonContinue.visible = false;
+        this.buttonExit.visible = false;
+    }
+
+    /**
+     * Go back to main menu.
+     */
+    private void onExit() {
+        super.holder.setState(new MainMenuState(super.holder));
     }
 
     @Override
@@ -186,6 +213,12 @@ public class RecursiveGameState extends GameState {
             this.paint.setAlpha(128);
             buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
             this.buttonCurrentPlayer.draw(buffer);
+        }
+
+        if (this.isPaused) {
+            buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
+            this.buttonContinue.draw(buffer);
+            this.buttonExit.draw(buffer);
         }
     }
 
@@ -237,12 +270,19 @@ public class RecursiveGameState extends GameState {
         this.buttonCurrentPlayer.width = this.width / 2;
         this.buttonCurrentPlayer.paint.setTextSize(this.height / 10);
 
+        this.buttonContinue.width = this.buttonExit.width = this.width / 4;
+        this.buttonContinue.x = this.buttonExit.x = this.width / 2 - this.buttonContinue.width / 2;
+        this.buttonContinue.y = this.height * 2 / 5;
+        this.buttonExit.y = this.height * 3 / 5;
+
         this.setSubstate(START);
     }
 
     @Override
     public void update() {
         this.updateUI();
+
+        if (this.isPaused) return;
 
         if (this.substate != AWAITING) ++this.stateTimer;
 
@@ -295,5 +335,13 @@ public class RecursiveGameState extends GameState {
     private void setSubstate(byte substate) {
         this.substate = substate;
         this.stateTimer = 0;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.isPaused = !this.isPaused;
+        this.buttonContinue.visible = this.isPaused;
+        this.buttonExit.visible = this.isPaused;
     }
 }
