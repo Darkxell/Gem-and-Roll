@@ -22,6 +22,8 @@ import com.darkxell.gemandroll.mechanics.replays.Replay;
 
 public class RecursiveGameState extends GameState {
 
+    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, AWAITING = 7, END = 8;
+
     /**
      * Builds a new Playstate that can be used to actually play the game.
      */
@@ -104,6 +106,14 @@ public class RecursiveGameState extends GameState {
      * Determines if this Game is being played or if the app is reading a Replay.
      */
     private boolean isReplay = false;
+    /**
+     * Determines the current substate.
+     */
+    private byte substate = SETUPUI;
+    /**
+     * A timer for animations.
+     */
+    private int stateTimer = 0;
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -133,6 +143,7 @@ public class RecursiveGameState extends GameState {
     };
     private MenuButton[] buttonsPlayers;
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
+    private MenuButton buttonCurrentPlayer;
 
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
@@ -148,6 +159,7 @@ public class RecursiveGameState extends GameState {
         this.addButton(this.buttonHeart1);
         this.addButton(this.buttonHeart2);
         this.addButton(this.buttonHeart3);
+        this.buttonCurrentPlayer = new MenuButton.Label(this.players[this.nowplaying].name + "'s Turn", namebar_full);
     }
 
     @Override
@@ -170,6 +182,11 @@ public class RecursiveGameState extends GameState {
 
         this.printUI(buffer);
 
+        if (this.substate <= START) {
+            this.paint.setAlpha(128);
+            buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
+            this.buttonCurrentPlayer.draw(buffer);
+        }
     }
 
     /**
@@ -213,11 +230,30 @@ public class RecursiveGameState extends GameState {
         this.buttonHeart1.y = this.buttonHeart2.y = this.buttonHeart3.y = this.verticalSplit + (this.height - this.verticalSplit) / 2 - buttonSize / 2;
         this.buttonHeart1.width = this.buttonHeart2.width = this.buttonHeart3.width = buttonSize;
         this.buttonReroll.width = this.buttonEndTurn.width = buttonSize * 2 + pad;
+
+        // Other components
+        this.buttonCurrentPlayer.x = this.width / 4;
+        this.buttonCurrentPlayer.y = this.height;
+        this.buttonCurrentPlayer.width = this.width / 2;
+        this.buttonCurrentPlayer.paint.setTextSize(this.height / 10);
+
+        this.setSubstate(START);
     }
 
     @Override
     public void update() {
         this.updateUI();
+
+        if (this.substate != AWAITING) ++this.stateTimer;
+
+        if (this.substate == START) {
+            final int APPEAR = 20, STAY = 80;
+            int pixels = this.height * 3 / 5 / APPEAR;
+            if (this.stateTimer >= APPEAR && this.stateTimer < APPEAR + STAY)
+                pixels = (this.height + this.buttonCurrentPlayer.height) / 5 / STAY;
+            this.buttonCurrentPlayer.y -= pixels;
+            if (this.buttonCurrentPlayer.y <= -this.buttonCurrentPlayer.height) this.setSubstate(DRAW);
+        }
     }
 
     /**
@@ -253,4 +289,11 @@ public class RecursiveGameState extends GameState {
         super.holder.setState(new RecursiveGameState(this));
     }
 
+    /**
+     * Changes the current substate and resets the state timer.
+     */
+    private void setSubstate(byte substate) {
+        this.substate = substate;
+        this.stateTimer = 0;
+    }
 }
