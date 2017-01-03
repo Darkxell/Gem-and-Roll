@@ -85,15 +85,7 @@ public class MainMenuState extends GameState {
         this.bufferwidth = buffer.getWidth();
         this.bufferheight = buffer.getHeight();
 
-        //Draws the background image.
-        float bumpduration = 100f;
-        final float mulsize = 13f;
-        if (smoothoffsetc > bumpduration)
-            smoothoffsetc = 0;
-        else
-            ++smoothoffsetc;
-        bumpduration = (float) (smoothoffsetc * 6 / bumpduration);
-        smoothBGoffset = (int) ((-Math.pow((bumpduration / 2), 2) + (bumpduration * 1.5f)) * mulsize);
+
 
         int imageheight = buffer.getWidth() / background.getWidth() * background.getHeight();
         if (verticaloffset >= imageheight - buffer.getHeight())
@@ -107,16 +99,6 @@ public class MainMenuState extends GameState {
 
             if (this.buttonPlay.x == 0) this.placeButtons(buffer);
             this.printUI(buffer);
-        }
-
-        //Calculates the background parallax offset.
-        if (counter > 140) {
-            if (bgOffsetAscend) bgfixedOffest += 0.5;
-            else bgfixedOffest -= 0.5;
-            if (bgfixedOffest <= 0) bgOffsetAscend = true;
-            else if (bgfixedOffest > 40) bgOffsetAscend = false;
-            else
-                bgOffsetAscend = (new Random().nextInt(20) == 7) ? !bgOffsetAscend : bgOffsetAscend;
         }
 
 
@@ -149,6 +131,16 @@ public class MainMenuState extends GameState {
 
     @Override
     public void update() {
+        //Draws the background image.
+        float bumpduration = 100f;
+        final float mulsize = 13f;
+        if (smoothoffsetc > bumpduration)
+            smoothoffsetc = 0;
+        else
+            ++smoothoffsetc;
+        bumpduration = (float) (smoothoffsetc * 6 / bumpduration);
+        smoothBGoffset = (int) ((-Math.pow((bumpduration / 2), 2) + (bumpduration * 1.5f)) * mulsize);
+        //Scrolls the background
         if (counter < 146) {
             int nofs = verticaloffset + 1 + verticaloffset / 30;
             if (nofs < Integer.MAX_VALUE / 2)
