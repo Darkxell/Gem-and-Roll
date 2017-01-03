@@ -19,6 +19,8 @@ import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
 import com.darkxell.gemandroll.mechanics.Statistics;
 
+import java.util.Random;
+
 /**
  * Created by Darkxell on 09/12/2016.
  */
@@ -62,7 +64,7 @@ public class MainMenuState extends GameState {
             Log.d("Replays", "Feature not implemented yet, sorry...");
         else if (buttonID == PLAY)
             super.holder.setState(new PlayerSelectionState(super.holder));
-            //super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
+        //super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
     }
 
     private int verticaloffset;
@@ -72,25 +74,51 @@ public class MainMenuState extends GameState {
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
     private MenuButton buttonPlay, buttonOptions, buttonReplays;
 
+    private double smoothoffsetc, smoothBGoffset;
+    private float bgfixedOffest = 0f;
+    private boolean bgOffsetAscend = true;
+
     private int bufferwidth, bufferheight;
 
     @Override
     public void print(Canvas buffer) {
         this.bufferwidth = buffer.getWidth();
         this.bufferheight = buffer.getHeight();
+
+        //Draws the background image.
+        float bumpduration = 100f;
+        final float mulsize = 13f;
+        if (smoothoffsetc > bumpduration)
+            smoothoffsetc = 0;
+        else
+            ++smoothoffsetc;
+        bumpduration = (float) (smoothoffsetc * 6 / bumpduration);
+        smoothBGoffset = (int) ((-Math.pow((bumpduration / 2), 2) + (bumpduration * 1.5f)) * mulsize);
+
         int imageheight = buffer.getWidth() / background.getWidth() * background.getHeight();
         if (verticaloffset >= imageheight - buffer.getHeight())
-            buffer.drawBitmap(background, null, new Rect(0, buffer.getHeight() - imageheight, buffer.getWidth(), buffer.getHeight()), null);
+            buffer.drawBitmap(background, null, new Rect(0, buffer.getHeight() - imageheight, buffer.getWidth(), buffer.getHeight() - (int) (bgfixedOffest)), null);
         else
-            buffer.drawBitmap(background, null, new Rect(0, -verticaloffset, buffer.getWidth(), imageheight - verticaloffset), null);
+            buffer.drawBitmap(background, null, new Rect(0, -verticaloffset, buffer.getWidth(), imageheight - verticaloffset - (int) (bgfixedOffest)), null);
 
         if (counter > 145 || hasOpenedOnce) {
             if (!hasOpenedOnce) hasOpenedOnce = true;
-            buffer.drawBitmap(title, (buffer.getWidth() / 2) - (title.getWidth() / 2), (buffer.getHeight() / 3) - (title.getHeight() / 2) - Math.min(counter - 145, 50), null);
+            buffer.drawBitmap(title, (buffer.getWidth() / 2) - (title.getWidth() / 2), (int) ((buffer.getHeight() / 3) - (title.getHeight() / 2) - Math.min(counter - 145, 50) - smoothBGoffset), null);
 
             if (this.buttonPlay.x == 0) this.placeButtons(buffer);
             this.printUI(buffer);
         }
+
+        //Calculates the background parallax offset.
+        if (counter > 140) {
+            if (bgOffsetAscend) bgfixedOffest += 0.5;
+            else bgfixedOffest -= 0.5;
+            if (bgfixedOffest <= 0) bgOffsetAscend = true;
+            else if (bgfixedOffest > 40) bgOffsetAscend = false;
+            else
+                bgOffsetAscend = (new Random().nextInt(20) == 7) ? !bgOffsetAscend : bgOffsetAscend;
+        }
+
 
     }
 
