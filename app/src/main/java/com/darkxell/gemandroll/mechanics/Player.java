@@ -49,5 +49,11 @@ public class Player {
         this.gems = array;
     }
 
+    /**
+     * Returns true if this Player is an AI.
+     */
+    public boolean isAI() {
+        return this.AItype != PlayerAI.UndefinedAI;
+    }
 
 }

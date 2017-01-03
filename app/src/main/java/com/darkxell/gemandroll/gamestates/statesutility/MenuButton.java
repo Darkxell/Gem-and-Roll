@@ -15,6 +15,20 @@ import com.darkxell.gemandroll.R;
 
 public abstract class MenuButton {
 
+    /**
+     * Default button with no click Event.
+     */
+    public static class Label extends MenuButton {
+
+        public Label(String text, Bitmap bitmap) {
+            super(text, bitmap);
+        }
+
+        @Override
+        public void onClick() {
+        }
+    }
+
     public Paint paint;
     public String text;
     public int x, y;
@@ -22,6 +36,13 @@ public abstract class MenuButton {
     public Bitmap bitmap;
     public boolean visible;
     int delay = 0;
+
+    /**
+     * Position defaults to zero.
+     */
+    public MenuButton(String text, Bitmap bitmap) {
+        this(text, bitmap, 0, 0);
+    }
 
     public MenuButton(String text, Bitmap bitmap, int x, int y) {
         this.text = text;
