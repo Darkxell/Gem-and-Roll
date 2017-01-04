@@ -12,6 +12,7 @@ import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Dice;
+import com.darkxell.gemandroll.mechanics.Gem;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.SeededRNG;
 import com.darkxell.gemandroll.mechanics.replays.Replay;
@@ -51,8 +52,10 @@ public class RecursiveGameState extends GameState {
         super(previous.holder);
         this.resetPouches();
         this.players = previous.players;
+        this.generator = previous.generator;
         this.stateiteration = previous.stateiteration + 1;
         this.nowplaying = previous.nowplaying == this.players.length - 1 ? 0 : previous.nowplaying + 1;
+        this.currentreplay = previous.currentreplay;
 
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
@@ -123,6 +126,10 @@ public class RecursiveGameState extends GameState {
      * True if the game is awaiting user input.
      */
     private boolean awatingInput = false;
+    /**
+     * Current health
+     */
+    private int health = 3;
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -141,7 +148,10 @@ public class RecursiveGameState extends GameState {
     private MenuButton buttonEndTurn = new MenuButton("End turn", button) {
         @Override
         public void onClick() {
-            endTurn();
+            buttonReroll.enabled = false;
+            buttonEndTurn.enabled = false;
+            buttonProceed.visible = true;
+            setSubstate(END);
         }
     };
     private MenuButton buttonReroll = new MenuButton("Reroll", button) {
@@ -154,6 +164,12 @@ public class RecursiveGameState extends GameState {
         @Override
         public void onClick() {
             roll();
+        }
+    };
+    private MenuButton buttonProceed = new MenuButton("Proceed", button) {
+        @Override
+        public void onClick() {
+            endTurn();
         }
     };
 
@@ -179,6 +195,7 @@ public class RecursiveGameState extends GameState {
         this.addButton(this.buttonEndTurn);
         this.addButton(this.buttonRoll);
         this.addButton(this.buttonPouch);
+        this.addButton(this.buttonProceed);
         this.addButton(this.buttonHeart1);
         this.addButton(this.buttonHeart2);
         this.addButton(this.buttonHeart3);
@@ -199,6 +216,9 @@ public class RecursiveGameState extends GameState {
         this.buttonContinue.visible = false;
         this.buttonExit.visible = false;
         this.buttonRoll.visible = false;
+        this.buttonProceed.visible = false;
+        this.buttonReroll.enabled = false;
+        this.buttonEndTurn.enabled = false;
     }
 
     /**
@@ -244,7 +264,7 @@ public class RecursiveGameState extends GameState {
             this.buttonCurrentPlayer.draw(buffer);
         }
 
-        if (this.substate == DRAW || this.substate == ROLL) {
+        if (this.substate >= DRAW && this.substate <= PLAYERCHOICE) {
             int diceSize = this.width / 6, pad = diceSize / 8;
             if (this.hand[0] != null) this.hand[0].draw(buffer, holder, this.horizontalSplit - diceSize / 2 - diceSize - pad, this.height / 3, diceSize);
             if (this.hand[1] != null) this.hand[1].draw(buffer, holder, this.horizontalSplit - diceSize / 2, this.height / 3, diceSize);
@@ -341,9 +361,10 @@ public class RecursiveGameState extends GameState {
         this.buttonContinue.y = this.height * 2 / 5;
         this.buttonExit.y = this.height * 3 / 5;
 
-        this.buttonRoll.width = this.width / 4;
-        this.buttonRoll.x = this.horizontalSplit - this.buttonRoll.width / 2;
+        this.buttonRoll.width = this.buttonProceed.width = this.width / 4;
+        this.buttonRoll.x = this.buttonProceed.x = this.horizontalSplit - this.buttonRoll.width / 2;
         this.buttonRoll.y = this.height / 5;
+        this.buttonProceed.y = this.height * 2 / 5;
 
         this.setSubstate(START);
     }
@@ -371,21 +392,22 @@ public class RecursiveGameState extends GameState {
                 if (this.hand[i] == null) this.hand[i] = this.drawDice();
             this.buttonRoll.visible = true;
             this.awatingInput = true;
-            if (this.stateTimer >= WAIT) this.setSubstate(COLLECT);
         }
 
         if (this.substate == ROLL && this.stateTimer >= WAIT) {
             for (int i = 0; i < this.hand.length; ++i) {
-                if (this.hand[i].getFace() == Dice.GEM) {
-                    this.collectGem(this.hand[i]);
-                    this.hand[i] = null;
-                }
-                else if (this.hand[i].getFace() == Dice.HURT) {
+                if (this.hand[i].getFace() == Dice.HURT) {
                     this.getHurt(this.hand[i]);
                     this.hand[i] = null;
                 }
+                else if (this.hand[i].getFace() == Dice.GEM) {
+                    this.collectGem(this.hand[i]);
+                    this.hand[i] = null;
+                }
             }
-            this.setSubstate(DRAW);
+            this.buttonReroll.enabled = true;
+            this.buttonEndTurn.enabled = true;
+            this.setSubstate(PLAYERCHOICE);
         }
     }
 
@@ -398,6 +420,11 @@ public class RecursiveGameState extends GameState {
                 else if (i == 2) this.buttonHeart3.bitmap = heartempty;
                 break;
             }
+        --this.health;
+        if (this.currentHealth() <= 0) {
+            this.buttonProceed.visible = true;
+            this.setSubstate(END);
+        }
     }
 
     private void collectGem(Dice dice) {
@@ -412,8 +439,10 @@ public class RecursiveGameState extends GameState {
         int index = this.generator.getRandomInt(0, this.pouch.length);
         Dice d = this.pouch[index];
         Dice[] newPouch = new Dice[this.pouch.length - 1];
-        for (int i = 0; i < this.pouch.length; ++i)
-            newPouch[i >= index ? i - 1 : i] = this.pouch[i];
+        for (int i = 0; i < index; ++i)
+            newPouch[i] = this.pouch[i];
+        for (int i = index + 1; i < this.pouch.length; ++i)
+            newPouch[i - 1] = this.pouch[i];
         this.pouch = newPouch;
         return d;
     }
@@ -429,9 +458,7 @@ public class RecursiveGameState extends GameState {
     }
 
     public int currentHealth() {
-        for (int i = 0; i < this.traps.length; ++i)
-            if (this.traps[i] == null) return 2 - i;
-        return 3;
+        return this.health;
     }
 
     /**
@@ -448,8 +475,9 @@ public class RecursiveGameState extends GameState {
      * Called when the player rolls the dices he/she drew.
      */
     private void roll() {
-        for (Dice d : this.hand)if (d != null) d.roll(this.generator, super.holder);
+        for (Dice d : this.hand) if (d != null) d.roll(this.generator, super.holder);
         this.awatingInput = false;
+        this.buttonRoll.visible = false;
         this.setSubstate(ROLL);
     }
 
@@ -457,13 +485,19 @@ public class RecursiveGameState extends GameState {
      * Called when the player rerolls.
      */
     private void reroll() {
-
+        this.buttonReroll.enabled = false;
+        this.buttonEndTurn.enabled = false;
+        this.setSubstate(DRAW);
     }
 
     /**
      * Called when the player chooses not to reroll, or dies.
      */
     private void endTurn() {
+        if (this.currentHealth() > 0) {
+            for (Dice gem : this.gems)
+                if (gem != null) this.players[this.nowplaying].addGem((Gem) gem.result);
+        }
         super.holder.setState(new RecursiveGameState(this));
     }
 
