@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
     /**
      * The current gamestate being used.
      */
-    private GameState currentstate;
+    private static GameState currentstate;
     /**
      * Defines the ammount of updates per second of the app. FPS is as much as possible. (This is a small app for a school project, no one cares about battery usage.)
      */
@@ -39,7 +39,8 @@ public class MainActivity extends Activity {
         //Create the Activity for display and update purposes.
         super.onCreate(savedInstanceState);
         this.view = new CustomView(this);
-        this.view.setState(currentstate = new MainMenuState(this));
+        if (currentstate == null) currentstate = new MainMenuState(this);
+        this.setState(currentstate);
         setContentView(view);
         createUpdaters();
     }
@@ -99,5 +100,15 @@ public class MainActivity extends Activity {
         this.currentstate.onBackPressed();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.updater.kill();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.updater.kill();
+    }
 }
