@@ -9,6 +9,7 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
+import com.darkxell.gemandroll.gamestates.statesutility.ReplaysState;
 import com.darkxell.gemandroll.mechanics.Statistics;
 
 /**
@@ -50,9 +51,10 @@ public class MainMenuState extends GameState {
 
         if (buttonID == OPTIONS)
             super.holder.setState(new AchievementsState(super.holder));
-        else if (buttonID == REPLAYS)
+        else if (buttonID == REPLAYS) {
             Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
-        else if (buttonID == PLAY)
+            super.holder.setState(new ReplaysState(super.holder));
+        } else if (buttonID == PLAY)
             super.holder.setState(new PlayerSelectionState(super.holder));
     }
 
