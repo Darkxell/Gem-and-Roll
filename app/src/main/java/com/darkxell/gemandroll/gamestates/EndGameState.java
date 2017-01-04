@@ -3,7 +3,10 @@ package com.darkxell.gemandroll.gamestates;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.Menu;
 
 import com.darkxell.gemandroll.MainActivity;
@@ -73,6 +76,7 @@ public class EndGameState extends GameState implements TextInputListener {
     private Bitmap namebar_selected = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
     private Bitmap namebar_left = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left);
     private Bitmap namebar_left_off = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left_ai);
+    private Paint paint = new Paint();
 
     // Player names
     private MenuButton buttonP1 = new MenuButton("", namebar) {
@@ -157,6 +161,9 @@ public class EndGameState extends GameState implements TextInputListener {
         this.addButton(this.buttonName);
     }
 
+    // size = draw size, width/height = distance dimensions
+    private int startX = 10, startY, gemSize = 0, gemWidth, gemHeight, padX, padY;
+
     @Override
     public void print(Canvas buffer) {
 
@@ -164,7 +171,19 @@ public class EndGameState extends GameState implements TextInputListener {
 
         if (this.buttonP1.x == 0) this.placeButtons(buffer);
 
+        int x = this.startX, y = startY;
+        for (int i = 0; i < this.players[this.selected].gems.length; ++i) {
+            buffer.drawBitmap(this.players[this.selected].gems[i].sprite, null, new Rect(x, y, x + this.gemSize, y + this.gemSize), null);
+            x += this.gemWidth + padX;
+            if (i % 8 == 7) {
+                x = this.startX;
+                y += this.gemHeight + padY;
+            }
+        }
+
         this.printUI(buffer);
+        String text = this.players[this.selected].deaths + " Deaths";
+        buffer.drawText(text, this.buttonSaveReplay.x + this.buttonSaveReplay.width / 2 - this.paint.measureText(text) / 2, this.buttonSaveReplay.y - this.paint.getTextSize() * 1.2f, this.paint);
 
     }
 
@@ -207,6 +226,18 @@ public class EndGameState extends GameState implements TextInputListener {
 
         this.buttonName.width = (int) (this.buttonP1.x * 1.1f);
         this.buttonName.y = this.verticalSplit / 2;
+
+        this.buttonName.processDimensions(buffer);
+        this.startY = this.buttonName.y + this.buttonName.height + 10;
+        int availableWidth = this.width - this.buttonP2.width - 20, availableHeight = this.buttonReplay.y - (this.buttonName.y + this.buttonName.height);
+        this.gemWidth = availableWidth / 9;
+        this.gemHeight = availableHeight / 5;
+        this.gemSize = Math.min(this.gemWidth, this.gemHeight);
+        this.padX = this.gemWidth / 9;
+        this.padY = this.gemHeight / 5;
+
+        this.paint.setTextSize(this.height / 16);
+        this.paint.setColor(Color.BLACK);
     }
 
     private void select(int i) {

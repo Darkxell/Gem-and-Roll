@@ -13,9 +13,11 @@ import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputState;
+import com.darkxell.gemandroll.mechanics.DiceResult;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.PlayerAI;
 import com.darkxell.gemandroll.mechanics.RandomNameGenerator;
+import com.darkxell.gemandroll.mechanics.replays.Replay;
 
 /**
  * Created by Cubi on 01/01/2017.
@@ -181,7 +183,10 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         Player[] players = new Player[this.playerCount];
         for (int i = 0; i < players.length; ++i) players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
         super.holder.setState(new RecursiveGameState(super.holder, players));
-        //super.holder.setState(new EndGameState(super.holder, players, this.currentreplay));
+        /*players[0].deaths = 3;
+        for (int i = 0; i < 18; ++i) players[0].addGem(DiceResult.getRandomGem(super.holder));
+        for (int i = 0; i < 25; ++i) players[1].addGem(DiceResult.getRandomGem(super.holder));
+        super.holder.setState(new EndGameState(super.holder, players, new Replay()));*/
     }
 
     @Override

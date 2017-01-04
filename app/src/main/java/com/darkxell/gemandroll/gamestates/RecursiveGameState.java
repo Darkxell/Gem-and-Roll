@@ -251,8 +251,6 @@ public class RecursiveGameState extends GameState {
             buffer.drawBitmap(borderv, null, new Rect(this.horizontalSplit, y, this.horizontalSplit + barthickness, y + barlength), null);
         buffer.drawBitmap(bordert, null, new Rect(this.horizontalSplit, this.verticalSplit, this.horizontalSplit + barthickness, this.verticalSplit + barthickness), null);
 
-        this.printUI(buffer);
-
         // Draw rolled dices
         for (int i = 0; i < this.gems.length; ++i) if (this.gems[i] != null)
             this.gems[i].draw(buffer, holder, this.gemsLocations[i][0], this.gemsLocations[i][1], this.gemSize);
@@ -262,12 +260,6 @@ public class RecursiveGameState extends GameState {
         // Draw pouch
         for (int i = 0; i < this.pouch.length; ++i)
             this.pouch[i].draw(buffer, holder, this.pouchStart + (this.pouchPad + this.pouchSize) * i, this.pouchY, this.pouchSize);
-
-        if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
-            this.paint.setAlpha(128);
-            buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
-            this.buttonCurrentPlayer.draw(buffer);
-        }
 
         if (this.substate >= DRAW && this.substate <= PLAYERCHOICE) {
             int diceSize = this.width / 6, pad = diceSize / 8;
@@ -288,6 +280,14 @@ public class RecursiveGameState extends GameState {
                 text = (gemCount == 0 ? "No" : gemCount) + " Gem" + (gemCount != 1 ? "s" : "") + " collected !";
                 buffer.drawText(text, this.horizontalSplit - this.paint.measureText(text) / 2, y, this.paint);
             }
+        }
+
+        this.printUI(buffer);
+
+        if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
+            this.paint.setAlpha(128);
+            buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
+            this.buttonCurrentPlayer.draw(buffer);
         }
 
         if (this.isPaused) {
@@ -388,7 +388,7 @@ public class RecursiveGameState extends GameState {
         this.setSubstate(START);
     }
 
-    private static final int APPEAR = 20, STAY = 80, WAIT = 20;
+    private static final int APPEAR = 10, STAY = 40, WAIT = 20;
 
     @Override
     public void update() {
@@ -424,7 +424,8 @@ public class RecursiveGameState extends GameState {
                     this.hand[i] = null;
                 }
             }
-            if (this.currentHealth() > 0) this.setSubstate(PLAYERCHOICE);
+            if (this.pouch.length == 0) this.setSubstate(END);
+            else if (this.currentHealth() > 0) this.setSubstate(PLAYERCHOICE);
         }
     }
 
