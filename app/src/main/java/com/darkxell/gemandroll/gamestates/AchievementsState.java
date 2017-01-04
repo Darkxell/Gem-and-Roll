@@ -17,9 +17,9 @@ import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
  * Created by Darkxell on 27/12/2016.
  */
 
-public class OptionsState extends GameState {
+public class AchievementsState extends GameState {
 
-    public OptionsState(MainActivity holder) {
+    public AchievementsState(MainActivity holder) {
         super(holder);
         this.addButton(new MenuButton("Back", button, 20, 20) {
             @Override

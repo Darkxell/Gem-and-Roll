@@ -3,23 +3,13 @@ package com.darkxell.gemandroll.gamestates;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
-import com.darkxell.gemandroll.gamestates.OptionsState;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
-import com.darkxell.gemandroll.mechanics.Achievement;
-import com.darkxell.gemandroll.mechanics.Player;
-import com.darkxell.gemandroll.mechanics.PlayerAI;
 import com.darkxell.gemandroll.mechanics.Statistics;
-
-import java.util.Random;
 
 /**
  * Created by Darkxell on 09/12/2016.
@@ -59,7 +49,7 @@ public class MainMenuState extends GameState {
     private void onButtonClick(int buttonID) {
 
         if (buttonID == OPTIONS)
-            super.holder.setState(new OptionsState(super.holder));
+            super.holder.setState(new AchievementsState(super.holder));
         else if (buttonID == REPLAYS)
             Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
         else if (buttonID == PLAY)
