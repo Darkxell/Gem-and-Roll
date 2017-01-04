@@ -10,6 +10,8 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
+import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
+import com.darkxell.gemandroll.gamestates.statesutility.TextInputState;
 import com.darkxell.gemandroll.mechanics.Player;
 
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.Comparator;
 /**
  * Created by Cubi on 04/01/2017.
  */
-public class EndGameState extends GameState {
+public class EndGameState extends GameState implements TextInputListener {
 
     public EndGameState(MainActivity holder, Player[] players) {
         super(holder);
@@ -59,9 +61,11 @@ public class EndGameState extends GameState {
     // Bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
+    private Bitmap button_off = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button_deactivated);
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
     private Bitmap namebar_selected = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
     private Bitmap namebar_left = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left);
+    private Bitmap namebar_left_off = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left_ai);
 
     // Player names
     private MenuButton buttonP1 = new MenuButton("", namebar) {
@@ -92,14 +96,23 @@ public class EndGameState extends GameState {
     private MenuButton buttonMenu = new MenuButton("Main Menu", button) {
         @Override
         public void onClick() {
-            holder.setState(new MainMenuState(holder));
+            onBackPressed();
         }
     };
     private MenuButton buttonReplay = new MenuButton("Replay: ", namebar_left) {
         @Override
         public void onClick() {
+            editReplay();
         }
     };
+
+    private MenuButton buttonSaveReplay = new MenuButton("Save replay", button) {
+        @Override
+        public void onClick() {
+            saveReplay();
+        }
+    };
+
     private MenuButton buttonName = new MenuButton.Label("", namebar_left);
 
     /**
@@ -123,12 +136,16 @@ public class EndGameState extends GameState {
         this.buttonP1.bitmapOff = this.buttonP2.bitmapOff = this.buttonP3.bitmapOff = this.buttonP4.bitmapOff = namebar_selected;
         this.select(0);
 
+        this.buttonSaveReplay.bitmapOff = button_off;
+        this.buttonReplay.bitmapOff = namebar_left_off;
+
         this.addButton(this.buttonP1);
         this.addButton(this.buttonP2);
         this.addButton(this.buttonP3);
         this.addButton(this.buttonP4);
         this.addButton(this.buttonMenu);
         this.addButton(this.buttonReplay);
+        this.addButton(this.buttonSaveReplay);
         this.addButton(this.buttonName);
     }
 
@@ -177,6 +194,9 @@ public class EndGameState extends GameState {
         this.buttonReplay.x = 0;
         this.buttonReplay.y = this.height - 10 - this.buttonReplay.height;
 
+        this.buttonSaveReplay.x = this.buttonReplay.width - 5;
+        this.buttonSaveReplay.y = this.buttonReplay.y + this.buttonReplay.height / 3;
+
         this.buttonName.width = (int) (this.buttonP1.x * 1.1f);
         this.buttonName.y = this.verticalSplit / 2;
     }
@@ -191,7 +211,32 @@ public class EndGameState extends GameState {
     }
 
     @Override
+    public void onBackPressed() {
+        super.holder.setState(new MainMenuState(super.holder));
+    }
+
+    @Override
     public void update() {
         this.updateUI();
+    }
+
+    private void editReplay() {
+        super.holder.setState(new TextInputState(super.holder, this, this.buttonReplay.text));
+    }
+
+    private void saveReplay() {
+        this.buttonReplay.enabled = false;
+        this.buttonSaveReplay.enabled = false;
+    }
+
+    @Override
+    public void onInput(String textInput) {
+        this.buttonReplay.text = textInput;
+        super.holder.setState(this);
+    }
+
+    @Override
+    public void cancelInput() {
+        super.holder.setState(this);
     }
 }
