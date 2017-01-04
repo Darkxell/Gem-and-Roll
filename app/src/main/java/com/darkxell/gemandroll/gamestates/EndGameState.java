@@ -13,6 +13,8 @@ import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputState;
 import com.darkxell.gemandroll.mechanics.Player;
+import com.darkxell.gemandroll.mechanics.replays.Replay;
+import com.darkxell.gemandroll.storage.ReplaysHolder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,9 +24,10 @@ import java.util.Comparator;
  */
 public class EndGameState extends GameState implements TextInputListener {
 
-    public EndGameState(MainActivity holder, Player[] players) {
+    public EndGameState(MainActivity holder, Player[] players, Replay replay) {
         super(holder);
         this.players = players;
+        this.replay = replay;
 
         this.sortPlayers();
         this.createUI();
@@ -53,6 +56,10 @@ public class EndGameState extends GameState implements TextInputListener {
      * Players of this Game.
      */
     private Player[] players;
+    /**
+     * The Game's replay.
+     */
+    private Replay replay;
     /**
      * Currently selected player.
      */
@@ -132,6 +139,7 @@ public class EndGameState extends GameState implements TextInputListener {
         this.buttonP3.visible = this.players.length >= 3;
         this.buttonP4.visible = this.players.length >= 4;
         this.buttonReplay.text += this.players[0].name;
+        this.replay.name = this.buttonReplay.text;
 
         this.buttonP1.bitmapOff = this.buttonP2.bitmapOff = this.buttonP3.bitmapOff = this.buttonP4.bitmapOff = namebar_selected;
         this.select(0);
@@ -227,11 +235,17 @@ public class EndGameState extends GameState implements TextInputListener {
     private void saveReplay() {
         this.buttonReplay.enabled = false;
         this.buttonSaveReplay.enabled = false;
+        try {
+            ReplaysHolder.addReplay(this.replay);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onInput(String textInput) {
         this.buttonReplay.text = textInput;
+        this.replay.name = textInput;
         super.holder.setState(this);
     }
 

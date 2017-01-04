@@ -24,6 +24,16 @@ public class Replay {
      */
     public long seed;
 
+    /**
+     * Adds a turn to this Replay.
+     */
+    public void addTurn() {
+        int[] array = new int[this.turns.length + 1];
+        System.arraycopy(this.turns, 0, array, 0, this.turns.length);
+        array[this.turns.length] = 0;
+        this.turns = array;
+    }
+
     @Override
     public String toString() {
         String toreturn = "REPLAY=names:";

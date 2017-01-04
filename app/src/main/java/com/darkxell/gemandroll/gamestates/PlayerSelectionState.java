@@ -1,13 +1,11 @@
 package com.darkxell.gemandroll.gamestates;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.view.inputmethod.InputMethodManager;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
@@ -182,8 +180,8 @@ public class PlayerSelectionState extends GameState implements TextInputListener
     private void startGame() {
         Player[] players = new Player[this.playerCount];
         for (int i = 0; i < players.length; ++i) players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
-        //super.holder.setState(new RecursiveGameState(super.holder, players));
-        super.holder.setState(new EndGameState(super.holder, players));
+        super.holder.setState(new RecursiveGameState(super.holder, players));
+        //super.holder.setState(new EndGameState(super.holder, players, this.currentreplay));
     }
 
     @Override

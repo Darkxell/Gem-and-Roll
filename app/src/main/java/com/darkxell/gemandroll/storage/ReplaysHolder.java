@@ -3,6 +3,7 @@ package com.darkxell.gemandroll.storage;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.darkxell.gemandroll.mechanics.replays.Replay;
 
@@ -65,6 +66,11 @@ public abstract class ReplaysHolder {
         d.close();
         replays = data;
         isLoaded = true;
+
+        for (Replay r :
+                replays) {
+            Log.d("Replays", r.toString());
+        }
     }
 
 }

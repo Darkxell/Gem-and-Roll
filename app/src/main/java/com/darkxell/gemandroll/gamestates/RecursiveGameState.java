@@ -36,6 +36,7 @@ public class RecursiveGameState extends GameState {
         this.resetPouches();
 
         this.currentreplay = new Replay();
+        this.currentreplay.turns = new int[] { 0 };
         this.currentreplay.seed = this.generator.getSeed();
         this.currentreplay.playernames = new String[this.players.length];
         for (int i = 0; i < this.currentreplay.playernames.length; ++i) this.currentreplay.playernames[i] = this.players[i].name;
@@ -57,6 +58,7 @@ public class RecursiveGameState extends GameState {
         this.stateiteration = previous.stateiteration + 1;
         this.nowplaying = previous.nowplaying == this.players.length - 1 ? 0 : previous.nowplaying + 1;
         this.currentreplay = previous.currentreplay;
+        this.currentreplay.addTurn();
 
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
@@ -501,6 +503,7 @@ public class RecursiveGameState extends GameState {
      */
     private void reroll() {
         this.setSubstate(DRAW);
+        ++this.currentreplay.turns[this.stateiteration];
     }
 
     /**
@@ -512,7 +515,7 @@ public class RecursiveGameState extends GameState {
                 if (gem != null) this.players[this.nowplaying].addGem((Gem) gem.result);
         } else Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
 
-        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players));
+        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay));
         else super.holder.setState(new RecursiveGameState(this));
     }
 
