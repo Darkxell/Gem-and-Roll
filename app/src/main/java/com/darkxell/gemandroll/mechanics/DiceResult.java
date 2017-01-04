@@ -19,11 +19,11 @@ public class DiceResult {
     }
 
     public static Gem getRandomGem(MainActivity holder) {
-        return new Gem(BitmapFactory.decodeResource(holder.getResources(), Gem.bitmaps[new SeededRNG().getRandomInt(0, Gem.bitmaps.length - 1)]));
+        return new Gem(BitmapFactory.decodeResource(holder.getResources(), Gem.bitmaps[new SeededRNG().getRandomInt(0, Gem.bitmaps.length)]));
     }
 
     public static Trap getRandomTrap(MainActivity holder) {
-        return new Trap(BitmapFactory.decodeResource(holder.getResources(), Trap.bitmaps[new SeededRNG().getRandomInt(0, Trap.bitmaps.length - 1)]));
+        return new Trap(BitmapFactory.decodeResource(holder.getResources(), Trap.bitmaps[new SeededRNG().getRandomInt(0, Trap.bitmaps.length)]));
     }
 
     public static DiceResult getRandomReroll(MainActivity holder) {

@@ -51,7 +51,7 @@ public class Dice {
      * Roll this dice using the wanted random number generator. Will randomely roll if the generator is null. Also returns the result of the roll.
      */
     public byte roll(SeededRNG generator, MainActivity holder) {
-        this.face = this.faces[generator.getRandomInt(0, this.faces.length - 1)];
+        this.face = this.faces[generator.getRandomInt(0, this.faces.length)];
 
         if (this.face == GEM) this.result = DiceResult.getRandomGem(holder);
         else if (this.face == REROLL) this.result = DiceResult.getRandomReroll(holder);
@@ -101,7 +101,7 @@ public class Dice {
         paint.setColor(this.getColor());
         paint.setAlpha(64);
         buffer.drawRect(bounds, paint);
-        if (this.result != null) buffer.drawBitmap(this.result.sprite, null, bounds, null);
+        if (this.result != null) buffer.drawBitmap(this.result.sprite, null, new Rect(x + size / 8, y + size / 8, x + size * 7 / 8, y + size * 7 / 8), null);
     }
 
     /**

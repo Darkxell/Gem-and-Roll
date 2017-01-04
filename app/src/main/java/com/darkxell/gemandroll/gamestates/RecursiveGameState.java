@@ -228,7 +228,7 @@ public class RecursiveGameState extends GameState {
             this.buttonCurrentPlayer.draw(buffer);
         }
 
-        if (this.substate == DRAW) {
+        if (this.substate == DRAW || this.substate == ROLL) {
             int diceSize = this.width / 6, pad = diceSize / 8;
             if (this.hand[0] != null) this.hand[0].draw(buffer, holder, this.horizontalSplit - diceSize / 2 - diceSize - pad, this.height / 3, diceSize);
             if (this.hand[1] != null) this.hand[1].draw(buffer, holder, this.horizontalSplit - diceSize / 2, this.height / 3, diceSize);
@@ -329,7 +329,7 @@ public class RecursiveGameState extends GameState {
     }
 
     private Dice drawDice() {
-        int index = this.generator.getRandomInt(0, this.pouch.length - 1);
+        int index = this.generator.getRandomInt(0, this.pouch.length);
         Dice d = this.pouch[index];
         Dice[] newPouch = new Dice[this.pouch.length - 1];
         for (int i = 0; i < this.pouch.length; ++i)
@@ -361,7 +361,8 @@ public class RecursiveGameState extends GameState {
      * Called when the player rolls the dices he/she drew.
      */
     private void roll() {
-
+        for (Dice d : this.hand) d.roll(this.generator, super.holder);
+        this.setSubstate(ROLL);
     }
 
     /**
