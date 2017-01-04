@@ -22,7 +22,7 @@ import com.darkxell.gemandroll.mechanics.replays.Replay;
 
 public class RecursiveGameState extends GameState {
 
-    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, AWAITING = 7, END = 8;
+    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, END = 7;
 
     /**
      * Builds a new Playstate that can be used to actually play the game.
@@ -118,6 +118,10 @@ public class RecursiveGameState extends GameState {
      * True if the game is paused.
      */
     private boolean isPaused = false;
+    /**
+     * True if the game is awaiting user input.
+     */
+    private boolean awatingInput = false;
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -145,6 +149,13 @@ public class RecursiveGameState extends GameState {
             reroll();
         }
     };
+    private MenuButton buttonRoll = new MenuButton("Roll !", button) {
+        @Override
+        public void onClick() {
+            roll();
+        }
+    };
+
     private MenuButton[] buttonsPlayers;
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
     private MenuButton buttonCurrentPlayer;
@@ -161,6 +172,7 @@ public class RecursiveGameState extends GameState {
 
         this.addButton(this.buttonReroll);
         this.addButton(this.buttonEndTurn);
+        this.addButton(this.buttonRoll);
         this.addButton(this.buttonHeart1);
         this.addButton(this.buttonHeart2);
         this.addButton(this.buttonHeart3);
@@ -180,6 +192,7 @@ public class RecursiveGameState extends GameState {
 
         this.buttonContinue.visible = false;
         this.buttonExit.visible = false;
+        this.buttonRoll.visible = false;
     }
 
     /**
@@ -209,10 +222,17 @@ public class RecursiveGameState extends GameState {
 
         this.printUI(buffer);
 
-        if (this.substate <= START) {
+        if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
             this.paint.setAlpha(128);
             buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
             this.buttonCurrentPlayer.draw(buffer);
+        }
+
+        if (this.substate == DRAW) {
+            int diceSize = this.width / 6, pad = diceSize / 8;
+            if (this.hand[0] != null) this.hand[0].draw(buffer, holder, this.horizontalSplit - diceSize / 2 - diceSize - pad, this.height / 3, diceSize);
+            if (this.hand[1] != null) this.hand[1].draw(buffer, holder, this.horizontalSplit - diceSize / 2, this.height / 3, diceSize);
+            if (this.hand[2] != null) this.hand[2].draw(buffer, holder, this.horizontalSplit + diceSize / 2 + pad, this.height / 3, diceSize);
         }
 
         if (this.isPaused) {
@@ -275,8 +295,14 @@ public class RecursiveGameState extends GameState {
         this.buttonContinue.y = this.height * 2 / 5;
         this.buttonExit.y = this.height * 3 / 5;
 
+        this.buttonRoll.width = this.width / 4;
+        this.buttonRoll.x = this.horizontalSplit - this.buttonRoll.width / 2;
+        this.buttonRoll.y = this.height / 5;
+
         this.setSubstate(START);
     }
+
+    private static final int APPEAR = 20, STAY = 80, WAIT = 20;
 
     @Override
     public void update() {
@@ -284,16 +310,32 @@ public class RecursiveGameState extends GameState {
 
         if (this.isPaused) return;
 
-        if (this.substate != AWAITING) ++this.stateTimer;
+        if (!this.awatingInput) ++this.stateTimer;
 
         if (this.substate == START) {
-            final int APPEAR = 20, STAY = 80;
             int pixels = this.height * 3 / 5 / APPEAR;
             if (this.stateTimer >= APPEAR && this.stateTimer < APPEAR + STAY)
                 pixels = (this.height + this.buttonCurrentPlayer.height) / 5 / STAY;
             this.buttonCurrentPlayer.y -= pixels;
-            if (this.buttonCurrentPlayer.y <= -this.buttonCurrentPlayer.height) this.setSubstate(DRAW);
+            if (this.buttonCurrentPlayer.y <= -this.buttonCurrentPlayer.height && this.stateTimer >= APPEAR * 2 + STAY + WAIT) this.setSubstate(DRAW);
         }
+
+        if (this.substate == DRAW && !this.awatingInput) {
+            for (int i = 0; i < this.hand.length; ++i)
+                if (this.hand[i] == null) this.hand[i] = this.drawDice();
+            this.buttonRoll.visible = true;
+            this.awatingInput = true;
+        }
+    }
+
+    private Dice drawDice() {
+        int index = this.generator.getRandomInt(0, this.pouch.length - 1);
+        Dice d = this.pouch[index];
+        Dice[] newPouch = new Dice[this.pouch.length - 1];
+        for (int i = 0; i < this.pouch.length; ++i)
+            newPouch[i >= index ? i - 1 : i] = this.pouch[i];
+        this.pouch = newPouch;
+        return d;
     }
 
     /**
@@ -311,8 +353,15 @@ public class RecursiveGameState extends GameState {
      */
     private void resetPouches() {
         this.pouch = getFullPouch();
-        this.hand = new Dice[]{};
+        this.hand = new Dice[3];
         this.rolled = new Dice[]{};
+    }
+
+    /**
+     * Called when the player rolls the dices he/she drew.
+     */
+    private void roll() {
+
     }
 
     /**

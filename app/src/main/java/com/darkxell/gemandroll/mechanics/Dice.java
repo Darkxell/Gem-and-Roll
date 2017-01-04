@@ -1,14 +1,22 @@
 package com.darkxell.gemandroll.mechanics;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
+import com.darkxell.gemandroll.R;
 
 /**
  * Created by Darkxell on 04/12/2016.
  */
 
 public class Dice {
+
+    private static Bitmap dice;
 
     public static final byte UNROLLED = 0;
     public static final byte GEM = 1;
@@ -80,6 +88,20 @@ public class Dice {
             if (this.faces[i] == face) ++correcponding;
         float r = correcponding / this.faces.length;
         return r;
+    }
+
+    /**
+     * Draws this Dice at the specified coordinates and with the specified size.
+     */
+    public void draw(Canvas buffer, MainActivity holder, int x, int y, int size) {
+        if (dice == null) dice = BitmapFactory.decodeResource(holder.getResources(), R.drawable.dice1);
+        Rect bounds = new Rect(x, y, x + size, y + size);
+        buffer.drawBitmap(dice, null, bounds, null);
+        Paint paint = new Paint();
+        paint.setColor(this.getColor());
+        paint.setAlpha(64);
+        buffer.drawRect(bounds, paint);
+        if (this.result != null) buffer.drawBitmap(this.result.sprite, null, bounds, null);
     }
 
     /**
