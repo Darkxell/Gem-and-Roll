@@ -11,6 +11,7 @@ import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
 import com.darkxell.gemandroll.gamestates.statesutility.Updater;
+import com.darkxell.gemandroll.mechanics.Statistics;
 import com.darkxell.gemandroll.storage.ReplaysHolder;
 import com.darkxell.gemandroll.storage.Storage;
 
@@ -31,13 +32,16 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Loads the app data
+        ReplaysHolder.load(getApplicationContext());
+        Storage.instance = new Storage(getApplicationContext());
+        Statistics.instance = new Statistics();
+        //Create the Activity for display and update purposes.
         super.onCreate(savedInstanceState);
         this.view = new CustomView(this);
         this.view.setState(currentstate = new MainMenuState(this));
         setContentView(view);
         createUpdaters();
-        ReplaysHolder.load(getApplicationContext());
-        Storage.instance = new Storage(getApplicationContext());
     }
 
     /**

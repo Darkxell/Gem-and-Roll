@@ -14,6 +14,9 @@ public class Storage {
 
     public static Storage instance;
 
+    /**
+     * Returns the instance of the Storage singleton
+     */
     public static Storage i() {
         return instance;
     }
@@ -37,7 +40,7 @@ public class Storage {
      * Returns the value stored
      */
     public String getValue(String key) {
-        return pref.getString(key, null);
+        return pref.getString(key, "0");
     }
 
 }

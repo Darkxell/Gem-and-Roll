@@ -1,5 +1,7 @@
 package com.darkxell.gemandroll.mechanics;
 
+import android.util.Log;
+
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 
 /**
@@ -10,7 +12,8 @@ public enum Achievement {
 
     BEST_SCORE("Hacker", "Get a score of 27.", Statistics.Stat.HIGH_SCORE, 25),
     ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
-    ONE_GAME("Expedition complete", "Win a game.", Statistics.Stat.HIGH_SCORE, 13);
+    ONE_GAME("Expedition complete", "Win a game.", Statistics.Stat.HIGH_SCORE, 13),
+    REPLAY_WATCHER("Replay watcher", "Enter the replays menu 10 times.", Statistics.Stat.REPLAYS_ENTERED, 10);
 
     /**
      * This achievement's name and description.
@@ -34,6 +37,10 @@ public enum Achievement {
         this.description = description;
         this.statToCheck = statToCheck;
         this.valueToReach = valueToReach;
+
+
+        this.isAcquired = Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
+        Log.d(name,""+isAcquired);
     }
 
     /**

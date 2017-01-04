@@ -1,5 +1,7 @@
 package com.darkxell.gemandroll.mechanics;
 
+import com.darkxell.gemandroll.storage.Storage;
+
 import java.util.HashMap;
 
 /**
@@ -18,7 +20,8 @@ public class Statistics {
         HURT_COUNT("Traps activated"),
         REROLL_COUNT("Pickaxes found"),
         TOTAL_SCORE("Total score"),
-        TOTAL_DEATHS("Total deaths");
+        TOTAL_DEATHS("Total deaths"),
+        REPLAYS_ENTERED("Replays entered");
 
         public final String name;
 
@@ -27,16 +30,17 @@ public class Statistics {
         }
     }
 
-    public static final Statistics instance = new Statistics();
+    public static Statistics instance;
 
     /**
      * Stores the value for each stat.
      */
     private HashMap<Stat, Integer> statistics;
 
-    private Statistics() {
+    public Statistics() {
         this.statistics = new HashMap<Stat, Integer>();
-        for (Stat stat : Stat.values()) this.statistics.put(stat, 0);
+        for (Stat stat : Stat.values())
+            this.statistics.put(stat, Integer.parseInt(Storage.i().getValue(stat.name)));
     }
 
     /**
@@ -52,6 +56,7 @@ public class Statistics {
      */
     public void setStatValue(Stat stat, int value) {
         this.statistics.put(stat, value);
+        Storage.i().addVariable(stat.name, "" + value);
         Achievement.triggerAchievements(stat);
     }
 

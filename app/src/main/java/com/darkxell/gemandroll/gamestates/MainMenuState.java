@@ -57,14 +57,13 @@ public class MainMenuState extends GameState {
     }
 
     private void onButtonClick(int buttonID) {
-        Statistics.instance.setStatValue(Statistics.Stat.HIGH_SCORE, Statistics.instance.getStatValue(Statistics.Stat.HIGH_SCORE) + 5);
+
         if (buttonID == OPTIONS)
             super.holder.setState(new OptionsState(super.holder));
         else if (buttonID == REPLAYS)
-            Log.d("Replays", "Feature not implemented yet, sorry...");
+            Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
         else if (buttonID == PLAY)
             super.holder.setState(new PlayerSelectionState(super.holder));
-        //super.holder.setState(new RecursiveGameState(super.holder, new Player[]{new Player("Player"), new Player("Testing AI", PlayerAI.TurnValueAI)}));
     }
 
     private int verticaloffset;
@@ -84,7 +83,6 @@ public class MainMenuState extends GameState {
     public void print(Canvas buffer) {
         this.bufferwidth = buffer.getWidth();
         this.bufferheight = buffer.getHeight();
-
 
 
         int imageheight = buffer.getWidth() / background.getWidth() * background.getHeight();
