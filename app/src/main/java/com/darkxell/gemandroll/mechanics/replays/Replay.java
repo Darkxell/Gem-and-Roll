@@ -36,7 +36,7 @@ public class Replay {
 
     @Override
     public String toString() {
-        String toreturn = "REPLAY=names:";
+        String toreturn = this.name + "=names:";
         for (int i = 0; i < playernames.length; ++i) {
             if (i != 0) toreturn += ",";
             toreturn += playernames[i];
@@ -81,7 +81,7 @@ public class Replay {
      * Returns a short description of the replay.
      */
     public String getShortDesc() {
-        String content = turns + ":";
+        String content = turns.length + ":";
         for (int i = 0; i < playernames.length; ++i)
             content += playernames[i] + ",";
         if (content.length() > 15) content = content.substring(0, 12) + "...";
