@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
+import com.darkxell.gemandroll.gamestates.RecursiveGameState;
 import com.darkxell.gemandroll.mechanics.replays.Replay;
 import com.darkxell.gemandroll.storage.ReplaysHolder;
 
@@ -77,14 +78,14 @@ public class ReplaysState extends GameState {
                 updatebuttons();
             }
         });
-        this.addButton(this.pagebutton = new MenuButton("Loading...",button, 0, 20) {
+        this.addButton(this.pagebutton = new MenuButton("Loading...", button, 0, 20) {
             @Override
             public void onClick() {
             }
         });
     }
 
-    private int scrollOffset = 0;
+    private int scrollOffset = 0,counter=0;
     private boolean needReplace = true;
 
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
@@ -93,7 +94,7 @@ public class ReplaysState extends GameState {
     private Bitmap plus = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_plus);
     private Bitmap minus = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_minus);
 
-    private MenuButton button1, button2, button3, button4, buttonminus, buttonplus,pagebutton;
+    private MenuButton button1, button2, button3, button4, buttonminus, buttonplus, pagebutton;
 
     @Override
     public void print(Canvas buffer) {
@@ -106,7 +107,7 @@ public class ReplaysState extends GameState {
     @Override
     public void update() {
         this.updateUI();
-
+    ++counter;
     }
 
     @Override
@@ -131,44 +132,46 @@ public class ReplaysState extends GameState {
         //plus and minus buttons
         y += pad * 2;
         this.buttonminus.width = this.buttonminus.height = this.buttonplus.width = this.buttonplus.height = pad;
-        int horalign =  buffer.getWidth() * 4 / 5;
+        int horalign = buffer.getWidth() * 4 / 5;
         this.buttonminus.y = this.buttonplus.y = y;
         this.buttonminus.x = horalign - pad;
         this.buttonplus.x = horalign + pad;
         //Page button
-        this.pagebutton.height = (int) (pad*1.5f);
-        this.pagebutton.width = buffer.getWidth()/5;
-        this.pagebutton.x =  buffer.getWidth() * 7 / 10;
+        this.pagebutton.height = (int) (pad * 1.5f);
+        this.pagebutton.width = buffer.getWidth() / 5;
+        this.pagebutton.x = buffer.getWidth() * 7 / 10;
 
         updatebuttons();
     }
 
     private void seeReplay(int offset) {
         int tosee = offset + this.scrollOffset;
+        if (tosee < replays.size()&&counter>20)
+            super.holder.setState(new RecursiveGameState(this.replays.get(tosee), super.holder));
     }
 
     private void updatebuttons() {
-        if (scrollOffset < replays.size()){
-            button1.text = replays.get(scrollOffset).getShortDesc();
-        }else{
+        if (scrollOffset < replays.size()) {
+            button1.text = replays.get(scrollOffset).name;
+        } else {
             button1.text = "...";
         }
-        if (scrollOffset + 1 < replays.size()){
-            button2.text = replays.get(scrollOffset + 1).getShortDesc();
-        }else{
+        if (scrollOffset + 1 < replays.size()) {
+            button2.text = replays.get(scrollOffset + 1).name;
+        } else {
             button2.text = "...";
         }
-        if (scrollOffset + 2 < replays.size()){
-            button3.text = replays.get(scrollOffset + 2).getShortDesc();
-        }else{
+        if (scrollOffset + 2 < replays.size()) {
+            button3.text = replays.get(scrollOffset + 2).name;
+        } else {
             button3.text = "...";
         }
-        if (scrollOffset + 3 < replays.size()){
-            button4.text = replays.get(scrollOffset + 3).getShortDesc();
-        }else{
+        if (scrollOffset + 3 < replays.size()) {
+            button4.text = replays.get(scrollOffset + 3).name;
+        } else {
             button4.text = "...";
         }
 
-        pagebutton.text = "Page "+(scrollOffset/4+1)+"/"+((replays.size()-1)/4+1);
+        pagebutton.text = "Page " + (scrollOffset / 4 + 1) + "/" + ((replays.size() - 1) / 4 + 1);
     }
 }

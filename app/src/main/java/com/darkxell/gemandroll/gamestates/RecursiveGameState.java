@@ -78,6 +78,12 @@ public class RecursiveGameState extends GameState {
      */
     public RecursiveGameState(Replay r, MainActivity holder) {
         super(holder);
+
+        Player[] players = new Player[r.playernames.length];
+        for (int i = 0; i < players.length; ++i)
+            players[i] = new Player(r.playernames[i],PlayerAI.UndefinedAI);
+        this.players = players;
+
         this.currentreplay = r;
         this.isReplay = true;
         this.generator = new SeededRNG(r.seed);
