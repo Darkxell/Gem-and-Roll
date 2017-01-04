@@ -135,6 +135,7 @@ public class RecursiveGameState extends GameState {
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
+    private Bitmap buttonOff = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button_deactivated);
     private Bitmap heartfull = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_full);
     private Bitmap heartempty = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_empty);
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
@@ -220,6 +221,7 @@ public class RecursiveGameState extends GameState {
         this.buttonEndTurn.enabled = false;
 
         this.buttonHeart1.bitmapOff = this.buttonHeart2.bitmapOff = this.buttonHeart3.bitmapOff = heartempty;
+        this.buttonReroll.bitmapOff = this.buttonEndTurn.bitmapOff = buttonOff;
     }
 
     /**
