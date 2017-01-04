@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Achievement;
@@ -37,6 +38,7 @@ public class RecursiveGameState extends GameState {
      */
     public RecursiveGameState(MainActivity holder, Player[] players) {
         super(holder);
+        AudioBot.i().setBGM(R.raw.play);
         this.players = players;
         this.generator = new SeededRNG();
         this.resetPouches();
@@ -82,6 +84,7 @@ public class RecursiveGameState extends GameState {
     public RecursiveGameState(Replay r, MainActivity holder) {
         super(holder);
 
+        AudioBot.i().setBGM(R.raw.play);
         Player[] players = new Player[r.playernames.length];
         for (int i = 0; i < players.length; ++i)
             players[i] = new Player(r.playernames[i],PlayerAI.UndefinedAI);

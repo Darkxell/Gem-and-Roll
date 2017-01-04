@@ -11,6 +11,7 @@ import android.view.Menu;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
@@ -35,6 +36,7 @@ public class EndGameState extends GameState implements TextInputListener {
 
         this.sortPlayers();
         this.createUI();
+        AudioBot.i().setBGM(R.raw.menus);
     }
 
     /**

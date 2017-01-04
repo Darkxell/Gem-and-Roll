@@ -9,6 +9,7 @@ import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Achievement;
@@ -21,7 +22,7 @@ public class AchievementsState extends GameState {
 
     public AchievementsState(MainActivity holder) {
         super(holder);
-
+        AudioBot.i().setBGM(R.raw.menus);
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
         this.paint.setStyle(Paint.Style.FILL);

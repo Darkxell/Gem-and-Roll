@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
@@ -36,6 +37,7 @@ public class MainActivity extends Activity {
         ReplaysHolder.load(getApplicationContext());
         Storage.instance = new Storage(getApplicationContext());
         Statistics.instance = new Statistics();
+        AudioBot.instance = new AudioBot(getApplicationContext());
         //Create the Activity for display and update purposes.
         super.onCreate(savedInstanceState);
         this.view = new CustomView(this);

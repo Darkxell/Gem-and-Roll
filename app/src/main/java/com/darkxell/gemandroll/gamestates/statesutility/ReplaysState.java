@@ -7,6 +7,7 @@ import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
 import com.darkxell.gemandroll.gamestates.RecursiveGameState;
 import com.darkxell.gemandroll.mechanics.replays.Replay;
@@ -28,6 +29,7 @@ public class ReplaysState extends GameState {
 
     public ReplaysState(MainActivity holder) {
         super(holder);
+        AudioBot.i().setBGM(R.raw.menus);
         try {
             this.replays = ReplaysHolder.getReplays();
         } catch (Exception e) {
