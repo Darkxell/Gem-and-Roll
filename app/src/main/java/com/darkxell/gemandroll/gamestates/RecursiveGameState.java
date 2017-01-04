@@ -14,9 +14,12 @@ import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Dice;
 import com.darkxell.gemandroll.mechanics.Gem;
 import com.darkxell.gemandroll.mechanics.Player;
+import com.darkxell.gemandroll.mechanics.PlayerAI;
 import com.darkxell.gemandroll.mechanics.SeededRNG;
 import com.darkxell.gemandroll.mechanics.Statistics;
 import com.darkxell.gemandroll.mechanics.replays.Replay;
+
+import java.util.ArrayList;
 
 /**
  * Created by Darkxell but mainly edited by Cubi on 20/12/2016.
@@ -25,6 +28,7 @@ import com.darkxell.gemandroll.mechanics.replays.Replay;
 public class RecursiveGameState extends GameState {
 
     private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, PLAYERCHOICE = 7, END = 8;
+    private Dice[] rolled;
 
     /**
      * Builds a new Playstate that can be used to actually play the game.
@@ -403,14 +407,19 @@ public class RecursiveGameState extends GameState {
             if (this.stateTimer >= APPEAR && this.stateTimer < APPEAR + STAY)
                 pixels = (this.height + this.buttonCurrentPlayer.height) / 5 / STAY;
             this.buttonCurrentPlayer.y -= pixels;
-            if (this.buttonCurrentPlayer.y <= -this.buttonCurrentPlayer.height && this.stateTimer >= APPEAR * 2 + STAY + WAIT) this.setSubstate(DRAW);
+            if (this.buttonCurrentPlayer.y <= -this.buttonCurrentPlayer.height && this.stateTimer >= APPEAR * 2 + STAY + WAIT)
+                this.setSubstate(DRAW);
         }
 
         if (this.substate == DRAW && !this.awatingInput) {
             for (int i = 0; i < this.hand.length; ++i)
                 if (this.hand[i] == null) this.hand[i] = this.drawDice();
-            this.buttonRoll.visible = true;
-            this.awatingInput = true;
+
+            if (this.players[this.nowplaying].isAI()) this.setSubstate(ROLL);
+            else {
+                this.buttonRoll.visible = true;
+                this.awatingInput = true;
+            }
         }
 
         if (this.substate == ROLL && this.stateTimer >= WAIT) {
@@ -418,14 +427,21 @@ public class RecursiveGameState extends GameState {
                 if (this.hand[i].getFace() == Dice.HURT) {
                     this.getHurt(this.hand[i]);
                     this.hand[i] = null;
-                }
-                else if (this.hand[i].getFace() == Dice.GEM) {
+                } else if (this.hand[i].getFace() == Dice.GEM) {
                     this.collectGem(this.hand[i]);
                     this.hand[i] = null;
                 }
             }
             if (this.pouch.length == 0) this.setSubstate(END);
             else if (this.currentHealth() > 0) this.setSubstate(PLAYERCHOICE);
+        }
+
+        if (this.substate == PLAYERCHOICE && this.players[this.nowplaying].isAI()) {
+            if (PlayerAI.getAI(this.players[this.nowplaying].AItype).shouldPlay(this.currentHealth(), this.players[this.nowplaying].getScore(), this.getHand(), this.getRolled())) this.reroll();
+            else {
+                buttonProceed.visible = true;
+                setSubstate(END);
+            }
         }
     }
 
@@ -539,5 +555,18 @@ public class RecursiveGameState extends GameState {
         this.isPaused = !this.isPaused;
         this.buttonContinue.visible = this.isPaused;
         this.buttonExit.visible = this.isPaused;
+    }
+
+    public Dice[] getHand() {
+        ArrayList<Dice> dices = new ArrayList<Dice>();
+        for (Dice d : this.hand) if (d != null) dices.add(d);
+        return dices.toArray(new Dice[dices.size()]);
+    }
+
+    public Dice[] getRolled() {
+        ArrayList<Dice> dices = new ArrayList<Dice>();
+        for (Dice d : this.gems) if (d != null) dices.add(d);
+        for (Dice d : this.traps) if (d != null) dices.add(d);
+        return dices.toArray(new Dice[dices.size()]);
     }
 }

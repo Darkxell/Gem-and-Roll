@@ -25,7 +25,7 @@ public abstract class PlayerAI {
     /**
      * Creates and return a new instance of the wanted AI.
      */
-    public PlayerAI getAI(byte ID) {
+    public static PlayerAI getAI(byte ID) {
         switch (ID) {
             case UndefinedAI:
                 return null;

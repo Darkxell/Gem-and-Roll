@@ -17,7 +17,7 @@ public class Player {
     /**
      * The ID of the AI being used. Is a real player if = 0.
      */
-    private byte AItype = 0;
+    public final byte AItype;
     /**
      * The number of times this Player died.
      */
@@ -27,14 +27,14 @@ public class Player {
      * creates a new player object
      */
     public Player(String name) {
-        this.name = name;
+        this(name, PlayerAI.UndefinedAI);
     }
 
     /**
      * creates a new AI player object
      */
     public Player(String name, byte ai) {
-        this(name);
+        this.name = name;
         this.AItype = ai;
     }
 
