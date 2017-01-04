@@ -513,7 +513,10 @@ public class RecursiveGameState extends GameState {
         if (this.currentHealth() > 0) {
             for (Dice gem : this.gems)
                 if (gem != null) this.players[this.nowplaying].addGem((Gem) gem.result);
-        } else Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
+        } else {
+            ++this.players[this.nowplaying].deaths;
+            Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
+        }
 
         if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay));
         else super.holder.setState(new RecursiveGameState(this));

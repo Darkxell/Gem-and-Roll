@@ -18,6 +18,10 @@ public class Player {
      * The ID of the AI being used. Is a real player if = 0.
      */
     private byte AItype = 0;
+    /**
+     * The number of times this Player died.
+     */
+    public int deaths = 0;
 
     /**
      * creates a new player object
