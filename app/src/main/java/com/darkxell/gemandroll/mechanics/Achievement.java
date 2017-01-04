@@ -15,7 +15,9 @@ public enum Achievement {
     ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
     SIXTYNINE_DEATH("Welp, it happened.", "Die. 69 times.", Statistics.Stat.TOTAL_DEATHS, 69),
     REPLAY_WATCHER("Replay watcher", "Enter the replays menu 10 times.", Statistics.Stat.REPLAYS_ENTERED, 10),
-    REPLAY_WATCHER2("Very Big nerd.", "Enter the replays menu 1337 times... I don't even know why you even...", Statistics.Stat.REPLAYS_ENTERED, 1337);
+    REPLAY_WATCHER2("Very Big nerd.", "Enter the replays menu 1337 times... I don't even know why you even...", Statistics.Stat.REPLAYS_ENTERED, 1337),
+    NECRODANCER("Necrodancer!", "Die 5 times in a row.", Statistics.Stat.DEATHS_ROW, 5),
+    LUCKY3("Surprise!", "Get 3 Gems on the first throw.", null, 0);
 
     /**
      * This achievement's name and description.
@@ -40,8 +42,7 @@ public enum Achievement {
         this.statToCheck = statToCheck;
         this.valueToReach = valueToReach;
 
-
-        this.isAcquired = Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
+        this.isAcquired = this.statToCheck != null && Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
         Log.d(name, "" + isAcquired);
     }
 
@@ -49,6 +50,7 @@ public enum Achievement {
      * Checks if this Achievement should unlock and does so. Called when statToCheck is changed.
      */
     public boolean check() {
+        if (this.statToCheck == null) return false;
         boolean unlock = Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
         if (unlock) this.setAcquired(true, true);
         return unlock;

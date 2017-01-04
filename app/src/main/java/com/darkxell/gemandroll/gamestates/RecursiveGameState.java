@@ -12,6 +12,7 @@ import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
+import com.darkxell.gemandroll.mechanics.Achievement;
 import com.darkxell.gemandroll.mechanics.Dice;
 import com.darkxell.gemandroll.mechanics.Gem;
 import com.darkxell.gemandroll.mechanics.Player;
@@ -39,6 +40,7 @@ public class RecursiveGameState extends GameState {
         this.players = players;
         this.generator = new SeededRNG();
         this.resetPouches();
+        this.deathsInARow = new int[this.players.length];
 
         this.currentreplay = new Replay();
         this.currentreplay.turns = new int[] { 0 };
@@ -62,6 +64,7 @@ public class RecursiveGameState extends GameState {
         this.generator = previous.generator;
         this.stateiteration = previous.stateiteration + 1;
         this.nowplaying = previous.nowplaying == this.players.length - 1 ? 0 : previous.nowplaying + 1;
+        this.deathsInARow = previous.deathsInARow;
         this.currentreplay = previous.currentreplay;
         this.isReplay = previous.isReplay;
         if (this.isReplay) this.rerollsToGo = this.currentreplay.turns[this.stateiteration];
@@ -83,6 +86,7 @@ public class RecursiveGameState extends GameState {
         for (int i = 0; i < players.length; ++i)
             players[i] = new Player(r.playernames[i],PlayerAI.UndefinedAI);
         this.players = players;
+        this.deathsInARow = new int[this.players.length];
 
         this.currentreplay = r;
         this.isReplay = true;
@@ -151,6 +155,7 @@ public class RecursiveGameState extends GameState {
      * Rerolls left to do if in a replay.
      */
     private int rerollsToGo = 0;
+    private int[] deathsInARow;
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -309,6 +314,7 @@ public class RecursiveGameState extends GameState {
         }
 
         if (this.isPaused) {
+            this.paint.setAlpha(128);
             buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
             this.buttonContinue.draw(buffer);
             this.buttonExit.draw(buffer);
@@ -448,7 +454,15 @@ public class RecursiveGameState extends GameState {
                     this.hand[i] = null;
                 }
             }
-            if (this.pouch.length == 0 || this.currentHealth() <= 0) {
+            int handSize = 0;
+            for (Dice d : this.hand) if (d != null) ++handSize;
+            if (this.pouch.length + handSize < 3 || this.currentHealth() <= 0) {
+                if (this.currentHealth() <= 0) {
+                    ++this.deathsInARow[this.nowplaying];
+                    if (this.deathsInARow[this.nowplaying] > Statistics.instance.getStatValue(Statistics.Stat.DEATHS_ROW))
+                        Statistics.instance.setStatValue(Statistics.Stat.DEATHS_ROW, this.deathsInARow[this.nowplaying]);
+                } else this.deathsInARow[this.nowplaying] = 0;
+
                 this.buttonProceed.visible = true;
                 this.setSubstate(END);
             }
@@ -541,6 +555,10 @@ public class RecursiveGameState extends GameState {
         this.awatingInput = false;
         this.buttonRoll.visible = false;
         this.setSubstate(ROLL);
+
+        if (this.gems[0] == null && this.traps[0] == null && this.stateiteration < this.players.length
+                && this.hand[0].getFace() == Dice.GEM && this.hand[1].getFace() == Dice.GEM && this.hand[2].getFace() == Dice.GEM
+                && !Achievement.LUCKY3.isAcquired()) Achievement.LUCKY3.setAcquired(true, true);
     }
 
     /**
