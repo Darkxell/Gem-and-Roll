@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.gamestates.statesutility.DiceAnimation;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Achievement;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 
 public class RecursiveGameState extends GameState {
 
-    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, PLAYERCHOICE = 7, END = 8;
+    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, DAMAGE = 4, COLLECT = 5, REROLL = 6, PLAYERCHOICE = 7, END = 8;
     private Dice[] rolled;
 
     /**
@@ -155,7 +156,14 @@ public class RecursiveGameState extends GameState {
      * Rerolls left to do if in a replay.
      */
     private int rerollsToGo = 0;
+    /**
+     * Represents each player's deaths in a row.
+     */
     private int[] deathsInARow;
+    /**
+     * Moving dices.
+     */
+    private ArrayList<DiceAnimation> animations = new ArrayList<DiceAnimation>();
 
     // Display bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -207,8 +215,8 @@ public class RecursiveGameState extends GameState {
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
     private int width = 0, height = 0;
-    private int[][] gemsLocations, trapLocations;
-    private int gemSize;
+    private int[][] gemsLocations, trapLocations, handLocations;
+    private int gemSize, handSize;
     private int pouchStart, pouchSize, pouchPad, pouchY;
 
     private void createUI() {
@@ -370,6 +378,15 @@ public class RecursiveGameState extends GameState {
         this.pouchStart = 10 + this.buttonPouch.width + this.pouchPad;
         this.pouchY = 10 + this.buttonPouch.height / 2 - this.pouchSize / 2;
 
+        // Place hand dices
+        this.handLocations = new int[3][2];
+        this.handSize = this.width / 6;
+        pad = this.handSize / 8;
+        this.handLocations[0][0] = this.horizontalSplit - this.handSize / 2 - this.handSize - pad;
+        this.handLocations[1][0] = this.horizontalSplit - this.handSize / 2;
+        this.handLocations[2][0] = this.horizontalSplit + this.handSize / 2 + pad;
+        this.handLocations[0][1] = this.handLocations[1][1] = this.handLocations[2][1] = this.height / 3;
+
         // Place the Player turn UI
         this.trapLocations = new int[3][2];
         int buttonHeight = this.height - this.verticalSplit * 5 / 6;
@@ -412,7 +429,7 @@ public class RecursiveGameState extends GameState {
         this.setSubstate(START);
     }
 
-    private static final int APPEAR = 10, STAY = 40, WAIT = 20;
+    private static final int APPEAR = 10, STAY = 40, WAIT = 20, MOVE = 20;
 
     @Override
     public void update() {
@@ -421,6 +438,14 @@ public class RecursiveGameState extends GameState {
         if (this.isPaused) return;
 
         if (!this.awatingInput) ++this.stateTimer;
+
+        for (int i = 0; i < this.animations.size(); ++i) {
+            this.animations.get(i).update();
+            if (this.animations.get(i).isOver()) {
+                this.animations.remove(i);
+                --i;
+            }
+        }
 
         if (this.substate == START) {
             int pixels = this.height * 3 / 5 / APPEAR;
@@ -442,6 +467,15 @@ public class RecursiveGameState extends GameState {
                 this.awatingInput = true;
             }
             return;
+        }
+
+        if (this.substate == DAMAGE && this.stateTimer >= WAIT) {
+            for (int i = 0; i < this.hand.length; ++i) {
+                if (this.hand[i].getFace() == Dice.HURT) {
+                    this.getHurt(this.hand[i]);
+                    this.hand[i] = null;
+                }
+            }
         }
 
         if (this.substate == ROLL && this.stateTimer >= WAIT) {
@@ -554,7 +588,7 @@ public class RecursiveGameState extends GameState {
         for (Dice d : this.hand) if (d != null) d.roll(this.generator, super.holder);
         this.awatingInput = false;
         this.buttonRoll.visible = false;
-        this.setSubstate(ROLL);
+        this.setSubstate(DAMAGE);
 
         if (this.gems[0] == null && this.traps[0] == null && this.stateiteration < this.players.length
                 && this.hand[0].getFace() == Dice.GEM && this.hand[1].getFace() == Dice.GEM && this.hand[2].getFace() == Dice.GEM

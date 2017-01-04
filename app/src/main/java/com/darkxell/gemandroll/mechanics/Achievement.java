@@ -43,7 +43,6 @@ public enum Achievement {
         this.valueToReach = valueToReach;
 
         this.isAcquired = this.statToCheck != null && Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
-        Log.d(name, "" + isAcquired);
     }
 
     /**
