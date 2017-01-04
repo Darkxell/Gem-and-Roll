@@ -47,6 +47,7 @@ public class Player {
         System.arraycopy(this.gems, 0, array, 0, this.gems.length);
         array[array.length-1] = g;
         this.gems = array;
+        Statistics.instance.increaseStat(Statistics.Stat.GEM_COUNT, 1);
     }
 
     /**

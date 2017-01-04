@@ -52,6 +52,13 @@ public class Statistics {
     }
 
     /**
+     * Increases the target stat by number.
+     */
+    public void increaseStat(Stat stat, int number) {
+        this.setStatValue(stat, this.getStatValue(stat) + number);
+    }
+
+    /**
      * Changes the value of the input Stat. Triggers achievements in consequence.
      */
     public void setStatValue(Stat stat, int value) {

@@ -15,6 +15,7 @@ import com.darkxell.gemandroll.mechanics.Dice;
 import com.darkxell.gemandroll.mechanics.Gem;
 import com.darkxell.gemandroll.mechanics.Player;
 import com.darkxell.gemandroll.mechanics.SeededRNG;
+import com.darkxell.gemandroll.mechanics.Statistics;
 import com.darkxell.gemandroll.mechanics.replays.Replay;
 
 /**
@@ -507,7 +508,8 @@ public class RecursiveGameState extends GameState {
         if (this.currentHealth() > 0) {
             for (Dice gem : this.gems)
                 if (gem != null) this.players[this.nowplaying].addGem((Gem) gem.result);
-        }
+        } else Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
+
         super.holder.setState(new RecursiveGameState(this));
     }
 
