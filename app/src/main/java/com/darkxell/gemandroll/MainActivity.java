@@ -5,10 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.darkxell.gemandroll.gamestates.TestState;
 import com.darkxell.gemandroll.gamestates.statesutility.CustomView;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.MainMenuState;
@@ -21,7 +19,7 @@ public class MainActivity extends Activity {
     /**
      * The current gamestate being used.
      */
-    private GameState currentstate = new TestState(this);
+    private GameState currentstate;
     /**
      * Defines the ammount of updates per second of the app. FPS is as much as possible. (This is a small app for a school project, no one cares about battery usage.)
      */
