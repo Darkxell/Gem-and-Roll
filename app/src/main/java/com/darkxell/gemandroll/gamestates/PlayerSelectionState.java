@@ -137,32 +137,32 @@ public class PlayerSelectionState extends GameState implements TextInputListener
             @Override
             public void onClick() {
                 isAI[0] = !isAI[0];
-                this.bitmap = isAI[0] ? boxChecked : boxUnchecked;
-                buttonP1.bitmap = isAI[0] ? namebarAI : namebar;
+                this.bitmapOn = isAI[0] ? boxChecked : boxUnchecked;
+                buttonP1.bitmapOn = isAI[0] ? namebarAI : namebar;
             }
         });
         this.addButton(this.buttonAI2 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
                 isAI[1] = !isAI[1];
-                this.bitmap = isAI[1] ? boxChecked : boxUnchecked;
-                buttonP2.bitmap = isAI[1] ? namebarAI : namebar;
+                this.bitmapOn = isAI[1] ? boxChecked : boxUnchecked;
+                buttonP2.bitmapOn = isAI[1] ? namebarAI : namebar;
             }
         });
         this.addButton(this.buttonAI3 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
                 isAI[2] = !isAI[2];
-                this.bitmap = isAI[2] ? boxChecked : boxUnchecked;
-                buttonP3.bitmap = isAI[2] ? namebarAI : namebar;
+                this.bitmapOn = isAI[2] ? boxChecked : boxUnchecked;
+                buttonP3.bitmapOn = isAI[2] ? namebarAI : namebar;
             }
         });
         this.addButton(this.buttonAI4 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
                 isAI[3] = !isAI[3];
-                this.bitmap = isAI[3] ? boxChecked : boxUnchecked;
-                buttonP4.bitmap = isAI[3] ? namebarAI : namebar;
+                this.bitmapOn = isAI[3] ? boxChecked : boxUnchecked;
+                buttonP4.bitmapOn = isAI[3] ? namebarAI : namebar;
             }
         });
     }
@@ -218,7 +218,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
     private void placeButtons(Canvas buffer) {
 
         // Left side
-        this.buttonPlayerPlus.width = this.buttonPlayerMinus.width = this.buttonPlayerPlus.bitmap.getWidth() * 3 / 2;
+        this.buttonPlayerPlus.width = this.buttonPlayerMinus.width = this.buttonPlayerPlus.bitmapOn.getWidth() * 3 / 2;
         this.buttonNumberPlayers.width = this.buttonPlayerPlus.width * 2;
 
         this.buttonNumberPlayers.x = this.bufferWidth / 5;
@@ -241,11 +241,11 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         this.buttonP1.width = this.buttonP2.width = this.buttonP3.width = this.buttonP4.width = this.bufferWidth * 2 / 5;
         this.buttonP1.x = this.buttonP2.x = this.buttonP3.x = this.buttonP4.x = this.bufferWidth - this.buttonP1.width;
 
-        this.buttonAI1.width = this.buttonAI2.width = this.buttonAI3.width = this.buttonAI4.width = this.buttonAI1.bitmap.getWidth();
+        this.buttonAI1.width = this.buttonAI2.width = this.buttonAI3.width = this.buttonAI4.width = this.buttonAI1.bitmapOn.getWidth();
         this.buttonAI1.x = this.buttonAI2.x = this.buttonAI3.x = this.buttonAI4.x = this.buttonP1.x - this.buttonAI1.width * 2;
 
         pad = y = this.bufferHeight / (this.playerCount + 2) / 2;
-        int offsetAI = this.buttonP1.width * this.buttonP1.bitmap.getHeight() / this.buttonP1.bitmap.getWidth() / 2 - this.buttonAI1.width / 2;
+        int offsetAI = this.buttonP1.width * this.buttonP1.bitmapOn.getHeight() / this.buttonP1.bitmapOn.getWidth() / 2 - this.buttonAI1.width / 2;
 
         y += pad * 2;
         this.buttonP1.y = y;

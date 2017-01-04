@@ -33,7 +33,7 @@ public abstract class MenuButton {
     public String text;
     public int x, y;
     public int width, height;
-    public Bitmap bitmap;
+    public Bitmap bitmapOn, bitmapOff;
     public boolean visible, enabled;
     int delay = 0;
 
@@ -46,7 +46,8 @@ public abstract class MenuButton {
 
     public MenuButton(String text, Bitmap bitmap, int x, int y) {
         this.text = text;
-        this.bitmap = bitmap;
+        this.bitmapOn = bitmap;
+        this.bitmapOff = bitmap;
         this.x = x;
         this.y = y;
         this.width = -1;
@@ -74,12 +75,13 @@ public abstract class MenuButton {
     public void draw(Canvas buffer) {
         if (!this.visible) return;
 
+        Bitmap bitmap = this.enabled ? this.bitmapOn : this.bitmapOff;
         // Set default size
         if (this.width == -1) {
             if (this.height == -1) this.width = (int) (buffer.getWidth() / 4);
-            else this.width = this.height / this.bitmap.getHeight() * this.bitmap.getWidth();
+            else this.width = this.height / bitmap.getHeight() * bitmap.getWidth();
         }
-        if (this.height == -1) this.height = this.width * this.bitmap.getHeight() / this.bitmap.getWidth();
+        if (this.height == -1) this.height = this.width * bitmap.getHeight() / bitmap.getWidth();
         if (this.paint.getTextSize() == 1) this.paint.setTextSize(buffer.getHeight() / 20);
 
         // Draw bitmap

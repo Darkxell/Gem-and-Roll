@@ -67,7 +67,7 @@ public abstract class GameState {
         if (achievementsToShow.length > 0) {
             if (achievementWidth == 0) {
                 // Init button
-                buttonAchievement.bitmap = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left);
+                buttonAchievement.bitmapOn = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_left);
                 achievementWidth = buttonAchievement.width = buffer.getWidth() / 2;
             }
             // Place button

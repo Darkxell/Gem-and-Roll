@@ -219,6 +219,8 @@ public class RecursiveGameState extends GameState {
         this.buttonProceed.visible = false;
         this.buttonReroll.enabled = false;
         this.buttonEndTurn.enabled = false;
+
+        this.buttonHeart1.bitmapOff = this.buttonHeart2.bitmapOff = this.buttonHeart3.bitmapOff = heartempty;
     }
 
     /**
@@ -320,7 +322,7 @@ public class RecursiveGameState extends GameState {
         int pouchWidth = this.width - buttonWidth;
         this.buttonPouch.x = this.buttonPouch.y = 10;
         this.buttonPouch.width = pouchWidth / 4;
-        this.buttonPouch.height = this.buttonPouch.width * this.buttonPouch.bitmap.getHeight() / this.buttonPouch.bitmap.getWidth();
+        this.buttonPouch.height = this.buttonPouch.width * this.buttonPouch.bitmapOn.getHeight() / this.buttonPouch.bitmapOn.getWidth();
         pouchWidth -= this.buttonPouch.width;
         this.pouchSize = pouchWidth / (this.pouch.length + 1);
         this.pouchPad = this.pouchSize / (this.pouch.length + 1);
@@ -415,9 +417,9 @@ public class RecursiveGameState extends GameState {
         for (int i = 0; i < this.traps.length; ++i)
             if (this.traps[i] == null) {
                 this.traps[i] = dice;
-                if (i == 0) this.buttonHeart1.bitmap = heartempty;
-                else if (i == 1) this.buttonHeart2.bitmap = heartempty;
-                else if (i == 2) this.buttonHeart3.bitmap = heartempty;
+                if (i == 0) this.buttonHeart1.enabled = false;
+                else if (i == 1) this.buttonHeart2.enabled = false;
+                else if (i == 2) this.buttonHeart3.enabled = false;
                 break;
             }
         --this.health;
