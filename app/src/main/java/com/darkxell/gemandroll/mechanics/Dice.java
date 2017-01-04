@@ -2,6 +2,8 @@ package com.darkxell.gemandroll.mechanics;
 
 import android.graphics.Color;
 
+import com.darkxell.gemandroll.MainActivity;
+
 /**
  * Created by Darkxell on 04/12/2016.
  */
@@ -11,7 +13,7 @@ public class Dice {
     public static final byte UNROLLED = 0;
     public static final byte GEM = 1;
     public static final byte REROLL = 2;
-    public static final byte HURT = 2;
+    public static final byte HURT = 3;
 
     public Dice(byte[] faces, int color) {
         this.display = color;
@@ -33,10 +35,19 @@ public class Dice {
     private byte[] faces;
 
     /**
+     * The result of this Dice. Used to store the bitmap of the result (Gems & traps can have different visuals).
+     */
+    public DiceResult result = null;
+
+    /**
      * Roll this dice using the wanted random number generator. Will randomely roll if the generator is null. Also returns the result of the roll.
      */
-    public byte roll(SeededRNG generator) {
+    public byte roll(SeededRNG generator, MainActivity holder) {
         this.face = this.faces[generator.getRandomInt(0, this.faces.length - 1)];
+
+        if (this.face == GEM) this.result = DiceResult.getRandomGem(holder);
+        else if (this.face == REROLL) this.result = DiceResult.getRandomReroll(holder);
+        else if (this.face == HURT) this.result = DiceResult.getRandomTrap(holder);
 
         Statistics s = Statistics.instance;
         s.setStatValue(Statistics.Stat.DICES_ROLLED, s.getStatValue(Statistics.Stat.DICES_ROLLED) + 1);
