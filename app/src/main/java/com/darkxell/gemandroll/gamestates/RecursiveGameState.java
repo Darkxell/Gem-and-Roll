@@ -22,7 +22,7 @@ import com.darkxell.gemandroll.mechanics.replays.Replay;
 
 public class RecursiveGameState extends GameState {
 
-    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, END = 7;
+    private static final byte SETUPUI = 0, START = 1, DRAW = 2, ROLL = 3, COLLECT = 4, DAMAGE = 5, REROLL = 6, PLAYERCHOICE = 7, END = 8;
 
     /**
      * Builds a new Playstate that can be used to actually play the game.
@@ -52,6 +52,7 @@ public class RecursiveGameState extends GameState {
         this.resetPouches();
         this.players = previous.players;
         this.stateiteration = previous.stateiteration + 1;
+        this.nowplaying = previous.nowplaying == this.players.length - 1 ? 0 : previous.nowplaying + 1;
 
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);
