@@ -15,6 +15,7 @@ public abstract class Updater {
     private Thread render;
     private Thread update;
     private long updatestarttime;
+    private boolean shouldStop = false;
 
     public abstract void onUpdate();
 
@@ -35,6 +36,7 @@ public abstract class Updater {
                         } catch (InterruptedException e) {
                             System.err.println("WARNING : renderer thread could not sleep for unknown reasons.");
                         }
+                    if (shouldStop) return;
                 }
             }
         });
@@ -53,10 +55,15 @@ public abstract class Updater {
                             System.err.println("WARNING : updater thread could not sleep for unknown reasons.");
                         }
                     }
+                    if (shouldStop) return;
                 }
             }
         });
         update.start();
 
+    }
+
+    public void kill() {
+        this.shouldStop = true;
     }
 }
