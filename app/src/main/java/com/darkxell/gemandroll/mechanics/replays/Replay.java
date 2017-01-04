@@ -50,7 +50,7 @@ public class Replay {
         try {
             toreturn.name = data.split("=")[0];
 
-            data = data.substring("REPLAY=names:".length());
+            data = data.substring((toreturn.name+"=names:").length());
             toreturn.playernames = data.substring(0, data.indexOf(":turns:")).split(",");
             toreturn.seed = Long.decode(data.substring(data.indexOf(":seed:") + ":seed:".length(), data.length() - ":".length()));
 
