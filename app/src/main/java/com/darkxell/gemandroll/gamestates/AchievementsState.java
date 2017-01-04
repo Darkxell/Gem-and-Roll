@@ -78,6 +78,7 @@ public class AchievementsState extends GameState {
         });
     }
 
+    private int scrollOffset = 0, onDisplayID = 0;
     private boolean needReplace = true;
 
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
