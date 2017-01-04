@@ -27,10 +27,11 @@ import java.util.Comparator;
  */
 public class EndGameState extends GameState implements TextInputListener {
 
-    public EndGameState(MainActivity holder, Player[] players, Replay replay) {
+    public EndGameState(MainActivity holder, Player[] players, Replay replay, boolean wasReplay) {
         super(holder);
         this.players = players;
         this.replay = replay;
+        this.wasReplay = wasReplay;
 
         this.sortPlayers();
         this.createUI();
@@ -67,6 +68,10 @@ public class EndGameState extends GameState implements TextInputListener {
      * Currently selected player.
      */
     private int selected = 0;
+    /**
+     * True if the Game was a replay.
+     */
+    private boolean wasReplay;
 
     // Bitmaps
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
@@ -156,8 +161,10 @@ public class EndGameState extends GameState implements TextInputListener {
         this.addButton(this.buttonP3);
         this.addButton(this.buttonP4);
         this.addButton(this.buttonMenu);
-        this.addButton(this.buttonReplay);
-        this.addButton(this.buttonSaveReplay);
+        if (!this.wasReplay) {
+            this.addButton(this.buttonReplay);
+            this.addButton(this.buttonSaveReplay);
+        }
         this.addButton(this.buttonName);
     }
 

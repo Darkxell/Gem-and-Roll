@@ -563,7 +563,7 @@ public class RecursiveGameState extends GameState {
             Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
         }
 
-        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay));
+        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay, this.isReplay));
         else super.holder.setState(new RecursiveGameState(this));
     }
 
