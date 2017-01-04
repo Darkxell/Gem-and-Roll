@@ -1,5 +1,6 @@
 package com.darkxell.gemandroll.storage;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,11 +45,15 @@ public abstract class ReplaysHolder {
     public static void addReplay(Replay r) throws Exception {
         if (!isLoaded)
             throw new Exception("Database is not loaded, could not add replay.");
-        
-        SQLiteDatabase d = database.getWritableDatabase();
-        d.execSQL("INSERT INTO replays values (" + r.serialize() + ");");
-        d.close();
+
         replays.add(r);
+        SQLiteDatabase d = database.getWritableDatabase();
+
+        ContentValues v = new ContentValues();
+        v.put("replay", r.serialize());
+        d.insert("replays",null,v);
+        d.close();
+
     }
 
     /**
