@@ -13,6 +13,8 @@ public class Replay {
      * The turns. One array index symbolize one player turn, and it's content is the number of rolls the player(or AI) has done in his turn.
      */
     public int[] turns;
+    /**The name of the replay.*/
+    public String name;
     /**
      * The player names.
      */
@@ -46,6 +48,8 @@ public class Replay {
         Replay toreturn = new Replay();
 
         try {
+            toreturn.name = data.split("=")[0];
+
             data = data.substring("REPLAY=names:".length());
             toreturn.playernames = data.substring(0, data.indexOf(":turns:")).split(",");
             toreturn.seed = Long.decode(data.substring(data.indexOf(":seed:") + ":seed:".length(), data.length() - ":".length()));
@@ -61,5 +65,16 @@ public class Replay {
         }
 
         return toreturn;
+    }
+
+    /**
+     * Returns a short description of the replay.
+     */
+    public String getShortDesc() {
+        String content = turns + ":";
+        for (int i = 0; i < playernames.length; ++i)
+            content += playernames[i] + ",";
+        if (content.length() > 15) content = content.substring(0, 12) + "...";
+        return content;
     }
 }
