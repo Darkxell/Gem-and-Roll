@@ -64,6 +64,7 @@ public abstract class ReplaysHolder {
         c.close();
         d.close();
         replays = data;
+        isLoaded = true;
     }
 
 }
