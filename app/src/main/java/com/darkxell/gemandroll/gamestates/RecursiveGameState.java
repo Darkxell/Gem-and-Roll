@@ -137,8 +137,8 @@ public class RecursiveGameState extends GameState {
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
     private Bitmap heartfull = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_full);
     private Bitmap heartempty = BitmapFactory.decodeResource(holder.getResources(), R.drawable.hearth_empty);
-    private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
-    private Bitmap namebar_ai = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
+    private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
+    private Bitmap namebar_ai = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
     private Bitmap namebar_full = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_textinput);
 
     private Bitmap borderv = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_borderv);
@@ -510,7 +510,8 @@ public class RecursiveGameState extends GameState {
                 if (gem != null) this.players[this.nowplaying].addGem((Gem) gem.result);
         } else Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
 
-        super.holder.setState(new RecursiveGameState(this));
+        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players));
+        else super.holder.setState(new RecursiveGameState(this));
     }
 
     /**

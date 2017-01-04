@@ -75,20 +75,24 @@ public abstract class MenuButton {
     public void draw(Canvas buffer) {
         if (!this.visible) return;
 
+        this.processDimensions(buffer);
         Bitmap bitmap = this.enabled ? this.bitmapOn : this.bitmapOff;
-        // Set default size
-        if (this.width == -1) {
-            if (this.height == -1) this.width = (int) (buffer.getWidth() / 4);
-            else this.width = this.height / bitmap.getHeight() * bitmap.getWidth();
-        }
-        if (this.height == -1) this.height = this.width * bitmap.getHeight() / bitmap.getWidth();
-        if (this.paint.getTextSize() == 1) this.paint.setTextSize(buffer.getHeight() / 20);
 
         // Draw bitmap
         buffer.drawBitmap(bitmap, null, new Rect(x, y, x + this.width, y + this.height), null);
 
         // Draw text
         buffer.drawText(this.text, x + (this.width / 2) - this.paint.measureText(this.text) / 2, y + (this.height / 2) + this.paint.getTextSize() / 4, this.paint);
+    }
+
+    public void processDimensions(Canvas buffer) {
+        Bitmap bitmap = this.enabled ? this.bitmapOn : this.bitmapOff;
+        if (this.width == -1) {
+            if (this.height == -1) this.width = (int) (buffer.getWidth() / 4);
+            else this.width = this.height / bitmap.getHeight() * bitmap.getWidth();
+        }
+        if (this.height == -1) this.height = this.width * bitmap.getHeight() / bitmap.getWidth();
+        if (this.paint.getTextSize() == 1) this.paint.setTextSize(buffer.getHeight() / 20);
     }
 
     public void update() {
