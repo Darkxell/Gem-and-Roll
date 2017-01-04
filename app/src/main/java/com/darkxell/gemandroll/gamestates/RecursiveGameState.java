@@ -161,12 +161,14 @@ public class RecursiveGameState extends GameState {
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
     private MenuButton buttonCurrentPlayer;
     private MenuButton buttonContinue, buttonExit;
+    private MenuButton buttonPouch = new MenuButton.Label("Pouch :", button);
 
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
     private int width = 0, height = 0;
     private int[][] gemsLocations, trapLocations;
     private int gemSize;
+    private int pouchStart, pouchSize, pouchPad, pouchY;
 
     private void createUI() {
         this.buttonsPlayers = new MenuButton[this.players.length];
@@ -176,6 +178,7 @@ public class RecursiveGameState extends GameState {
         this.addButton(this.buttonReroll);
         this.addButton(this.buttonEndTurn);
         this.addButton(this.buttonRoll);
+        this.addButton(this.buttonPouch);
         this.addButton(this.buttonHeart1);
         this.addButton(this.buttonHeart2);
         this.addButton(this.buttonHeart3);
@@ -231,6 +234,10 @@ public class RecursiveGameState extends GameState {
         for (int i = 0; i < this.traps.length; ++i) if (this.traps[i] != null)
             this.traps[i].draw(buffer, holder, this.trapLocations[i][0], this.trapLocations[i][1], this.gemSize);
 
+        // Draw pouch
+        for (int i = 0; i < this.pouch.length; ++i)
+            this.pouch[i].draw(buffer, holder, this.pouchStart + (this.pouchPad + this.pouchSize) * i, this.pouchY, this.pouchSize);
+
         if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
             this.paint.setAlpha(128);
             buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
@@ -278,20 +285,6 @@ public class RecursiveGameState extends GameState {
             this.gemsLocations[i][1] += this.verticalSplit + yOffset + this.height / 25;
         }
 
-        //TODO remove this when done testing
-        for (int i = 0; i < this.gems.length; ++i) {
-            if (i % 3 == 0) this.gems[i] = Dice.getTypicalGreenDice();
-            if (i % 3 == 1) this.gems[i] = Dice.getTypicalRedDice();
-            if (i % 3 == 2) this.gems[i] = Dice.getTypicalYellowDice();
-            while (this.gems[i].getFace() != Dice.GEM) this.gems[i].roll(this.generator, holder);
-        }
-        for (int i = 0; i < this.traps.length; ++i) {
-            if (i % 3 == 0) this.traps[i] = Dice.getTypicalGreenDice();
-            if (i % 3 == 1) this.traps[i] = Dice.getTypicalRedDice();
-            if (i % 3 == 2) this.traps[i] = Dice.getTypicalYellowDice();
-            while (this.traps[i].getFace() != Dice.HURT) this.traps[i].roll(this.generator, holder);
-        }
-
         // Place the Player names UI
         int buttonWidth = this.width / 4;
         int pad = this.horizontalSplit / (this.players.length * 2 + 1);
@@ -302,6 +295,17 @@ public class RecursiveGameState extends GameState {
             this.buttonsPlayers[i].width = buttonWidth;
             pos += pad * 2;
         }
+
+        // Place pouch
+        int pouchWidth = this.width - buttonWidth;
+        this.buttonPouch.x = this.buttonPouch.y = 10;
+        this.buttonPouch.width = pouchWidth / 4;
+        this.buttonPouch.height = this.buttonPouch.width * this.buttonPouch.bitmap.getHeight() / this.buttonPouch.bitmap.getWidth();
+        pouchWidth -= this.buttonPouch.width;
+        this.pouchSize = pouchWidth / (this.pouch.length + 1);
+        this.pouchPad = this.pouchSize / (this.pouch.length + 1);
+        this.pouchStart = 10 + this.buttonPouch.width + this.pouchPad;
+        this.pouchY = 10 + this.buttonPouch.height / 2 - this.pouchSize / 2;
 
         // Place the Player turn UI
         this.trapLocations = new int[3][2];
@@ -369,6 +373,39 @@ public class RecursiveGameState extends GameState {
             this.awatingInput = true;
             if (this.stateTimer >= WAIT) this.setSubstate(COLLECT);
         }
+
+        if (this.substate == ROLL && this.stateTimer >= WAIT) {
+            for (int i = 0; i < this.hand.length; ++i) {
+                if (this.hand[i].getFace() == Dice.GEM) {
+                    this.collectGem(this.hand[i]);
+                    this.hand[i] = null;
+                }
+                else if (this.hand[i].getFace() == Dice.HURT) {
+                    this.getHurt(this.hand[i]);
+                    this.hand[i] = null;
+                }
+            }
+            this.setSubstate(DRAW);
+        }
+    }
+
+    private void getHurt(Dice dice) {
+        for (int i = 0; i < this.traps.length; ++i)
+            if (this.traps[i] == null) {
+                this.traps[i] = dice;
+                if (i == 0) this.buttonHeart1.bitmap = heartempty;
+                else if (i == 1) this.buttonHeart2.bitmap = heartempty;
+                else if (i == 2) this.buttonHeart3.bitmap = heartempty;
+                break;
+            }
+    }
+
+    private void collectGem(Dice dice) {
+        for (int i = 0; i < this.gems.length; ++i)
+            if (this.gems[i] == null) {
+                this.gems[i] = dice;
+                break;
+            }
     }
 
     private Dice drawDice() {
@@ -391,6 +428,12 @@ public class RecursiveGameState extends GameState {
                 Dice.getTypicalYellowDice(), Dice.getTypicalRedDice(), Dice.getTypicalRedDice(), Dice.getTypicalRedDice()};
     }
 
+    public int currentHealth() {
+        for (int i = 0; i < this.traps.length; ++i)
+            if (this.traps[i] == null) return 2 - i;
+        return 3;
+    }
+
     /**
      * Reset the pouches of this object.
      */
@@ -405,7 +448,8 @@ public class RecursiveGameState extends GameState {
      * Called when the player rolls the dices he/she drew.
      */
     private void roll() {
-        for (Dice d : this.hand) d.roll(this.generator, super.holder);
+        for (Dice d : this.hand)if (d != null) d.roll(this.generator, super.holder);
+        this.awatingInput = false;
         this.setSubstate(ROLL);
     }
 
