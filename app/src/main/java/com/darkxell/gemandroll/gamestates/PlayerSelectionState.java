@@ -9,6 +9,7 @@ import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.gamestates.statesutility.TextInputListener;
@@ -52,6 +53,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
     public PlayerSelectionState(MainActivity holder) {
         super(holder);
 
+        AudioBot.i().setBGM(R.raw.menus);
         this.names = new String[MAX_PLAYERS];
         for (int i = 0; i < names.length; ++i) names[i] = RandomNameGenerator.getRandomName();
 

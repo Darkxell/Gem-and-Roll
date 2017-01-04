@@ -7,6 +7,7 @@ import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.gamestates.statesutility.ReplaysState;
@@ -45,6 +46,7 @@ public class MainMenuState extends GameState {
                 onButtonClick(REPLAYS);
             }
         });
+        AudioBot.i().setBGM(R.raw.home);
     }
 
     private void onButtonClick(int buttonID) {
