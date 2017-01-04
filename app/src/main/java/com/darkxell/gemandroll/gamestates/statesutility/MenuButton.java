@@ -89,7 +89,7 @@ public abstract class MenuButton {
         Bitmap bitmap = this.enabled ? this.bitmapOn : this.bitmapOff;
         if (this.width == -1) {
             if (this.height == -1) this.width = (int) (buffer.getWidth() / 4);
-            else this.width = this.height / bitmap.getHeight() * bitmap.getWidth();
+            else this.width = this.height * bitmap.getWidth() / bitmap.getHeight();
         }
         if (this.height == -1) this.height = this.width * bitmap.getHeight() / bitmap.getWidth();
         if (this.paint.getTextSize() == 1) this.paint.setTextSize(buffer.getHeight() / 20);

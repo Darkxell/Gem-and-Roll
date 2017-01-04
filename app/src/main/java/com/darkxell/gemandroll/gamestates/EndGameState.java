@@ -158,24 +158,27 @@ public class EndGameState extends GameState {
         this.buttonP1.processDimensions(buffer);
         this.verticalSplit = this.buttonP1.height + this.height / 10;
 
-        int buttonHeight = (this.height - this.verticalSplit) / (this.players.length * 2 - 1);
-        int pad = buttonHeight;
+        int buttonHeight = (this.height - this.verticalSplit) / Math.max(this.players.length, 3);
+        int pad = buttonHeight / 4;
         int y = this.verticalSplit + pad / 2;
 
         this.buttonP2.y = y;
-        y += pad * 2;
+        y += pad + buttonHeight;
         this.buttonP3.y = y;
-        y += pad * 2;
+        y += pad + buttonHeight;
         this.buttonP4.y = y;
 
         this.buttonP2.height = this.buttonP3.height = this.buttonP4.height = buttonHeight;
         this.buttonP2.processDimensions(buffer);
         this.buttonP2.x = this.buttonP3.x = this.buttonP4.x = this.width - this.buttonP2.width;
 
-        this.buttonReplay.width = this.verticalSplit;
+        this.buttonReplay.width = this.horizontalSplit;
         this.buttonReplay.processDimensions(buffer);
-        this.buttonReplay.x = 10;
+        this.buttonReplay.x = 0;
         this.buttonReplay.y = this.height - 10 - this.buttonReplay.height;
+
+        this.buttonName.width = (int) (this.buttonP1.x * 1.1f);
+        this.buttonName.y = this.verticalSplit / 2;
     }
 
     private void select(int i) {
