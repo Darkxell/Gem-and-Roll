@@ -34,7 +34,7 @@ public abstract class MenuButton {
     public int x, y;
     public int width, height;
     public Bitmap bitmap;
-    public boolean visible;
+    public boolean visible, enabled;
     int delay = 0;
 
     /**
@@ -52,6 +52,7 @@ public abstract class MenuButton {
         this.width = -1;
         this.height = -1;
         this.visible = true;
+        this.enabled = true;
 
         this.paint = new Paint();
         this.paint.setColor(Color.BLACK);

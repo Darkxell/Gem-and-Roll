@@ -117,7 +117,7 @@ public abstract class GameState {
      */
     public void onTouch(MotionEvent e) {
         for (MenuButton button : this.buttons) {
-            if (button.delay == 0 && button.contains((int) e.getX(), (int) e.getY())){
+            if (button.delay == 0 && button.enabled && button.contains((int) e.getX(), (int) e.getY())){
                 button.onClick();
                 button.delay = 5;
             }
