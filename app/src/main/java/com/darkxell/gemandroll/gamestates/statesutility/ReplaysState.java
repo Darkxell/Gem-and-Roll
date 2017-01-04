@@ -148,14 +148,27 @@ public class ReplaysState extends GameState {
     }
 
     private void updatebuttons() {
-        if (scrollOffset < replays.size())
+        if (scrollOffset < replays.size()){
             button1.text = replays.get(scrollOffset).getShortDesc();
-        if (scrollOffset + 1 < replays.size())
+        }else{
+            button1.text = "...";
+        }
+        if (scrollOffset + 1 < replays.size()){
             button2.text = replays.get(scrollOffset + 1).getShortDesc();
-        if (scrollOffset + 2 < replays.size())
+        }else{
+            button2.text = "...";
+        }
+        if (scrollOffset + 2 < replays.size()){
             button3.text = replays.get(scrollOffset + 2).getShortDesc();
-        if (scrollOffset + 3 < replays.size())
+        }else{
+            button3.text = "...";
+        }
+        if (scrollOffset + 3 < replays.size()){
             button4.text = replays.get(scrollOffset + 3).getShortDesc();
-        pagebutton.text = "Page "+(scrollOffset/4+1)+"/"+(replays.size()/4+1);
+        }else{
+            button4.text = "...";
+        }
+
+        pagebutton.text = "Page "+(scrollOffset/4+1)+"/"+((replays.size()-1)/4+1);
     }
 }

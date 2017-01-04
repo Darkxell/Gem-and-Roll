@@ -10,10 +10,12 @@ import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 
 public enum Achievement {
 
-    BEST_SCORE("Hacker", "Get a score of 27.", Statistics.Stat.HIGH_SCORE, 25),
-    ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
     ONE_GAME("Expedition complete", "Win a game.", Statistics.Stat.HIGH_SCORE, 13),
-    REPLAY_WATCHER("Replay watcher", "Enter the replays menu 10 times.", Statistics.Stat.REPLAYS_ENTERED, 10);
+    BEST_SCORE("Hacker", "Get a score of 25.", Statistics.Stat.HIGH_SCORE, 25),
+    ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
+    SIXTYNINE_DEATH("Welp, it happened.", "Die. 69 times.", Statistics.Stat.TOTAL_DEATHS, 69),
+    REPLAY_WATCHER("Replay watcher", "Enter the replays menu 10 times.", Statistics.Stat.REPLAYS_ENTERED, 10),
+    REPLAY_WATCHER2("Very Big nerd.", "Enter the replays menu 1337 times...", Statistics.Stat.REPLAYS_ENTERED, 1337);
 
     /**
      * This achievement's name and description.
@@ -32,7 +34,7 @@ public enum Achievement {
      */
     private boolean isAcquired = false;
 
-    private Achievement(String name, String description, Statistics.Stat statToCheck, int valueToReach) {
+    Achievement(String name, String description, Statistics.Stat statToCheck, int valueToReach) {
         this.name = name;
         this.description = description;
         this.statToCheck = statToCheck;
