@@ -15,7 +15,7 @@ public enum Achievement {
     ONE_DEATH("Too greedy", "Get hurt three times in a turn.", Statistics.Stat.TOTAL_DEATHS, 1),
     SIXTYNINE_DEATH("Welp, it happened.", "Die. 69 times.", Statistics.Stat.TOTAL_DEATHS, 69),
     REPLAY_WATCHER("Replay watcher", "Enter the replays menu 10 times.", Statistics.Stat.REPLAYS_ENTERED, 10),
-    REPLAY_WATCHER2("Very Big nerd.", "Enter the replays menu 1337 times...", Statistics.Stat.REPLAYS_ENTERED, 1337);
+    REPLAY_WATCHER2("Very Big nerd.", "Enter the replays menu 1337 times... I don't even know why you even...", Statistics.Stat.REPLAYS_ENTERED, 1337);
 
     /**
      * This achievement's name and description.
@@ -42,7 +42,7 @@ public enum Achievement {
 
 
         this.isAcquired = Statistics.instance.getStatValue(this.statToCheck) >= this.valueToReach;
-        Log.d(name,""+isAcquired);
+        Log.d(name, "" + isAcquired);
     }
 
     /**
@@ -60,6 +60,7 @@ public enum Achievement {
 
     /**
      * Should only be called for special achievements or when opening the game.
+     *
      * @param warnUser - True if the game should tell the user this achievement has been unlocked.
      */
     public void setAcquired(boolean acquired, boolean warnUser) {
@@ -72,7 +73,8 @@ public enum Achievement {
      */
     public static void triggerAchievements(Statistics.Stat updatedStat) {
         for (Achievement achievement : Achievement.values()) {
-            if (!achievement.isAcquired() && achievement.statToCheck == updatedStat) achievement.check();
+            if (!achievement.isAcquired() && achievement.statToCheck == updatedStat)
+                achievement.check();
         }
     }
 

@@ -6,17 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Achievement;
-import com.darkxell.gemandroll.mechanics.replays.Replay;
-import com.darkxell.gemandroll.storage.ReplaysHolder;
-
-import java.util.ArrayList;
 
 /**
  * Created by Darkxell on 27/12/2016.
@@ -26,6 +21,11 @@ public class AchievementsState extends GameState {
 
     public AchievementsState(MainActivity holder) {
         super(holder);
+
+        this.paint = new Paint();
+        this.paint.setColor(Color.BLACK);
+        this.paint.setStyle(Paint.Style.FILL);
+
         this.addButton(new MenuButton("Back", button, 20, 20) {
             @Override
             public void onClick() {
@@ -71,7 +71,7 @@ public class AchievementsState extends GameState {
                 updatebuttons();
             }
         });
-        this.addButton(this.pagebutton = new MenuButton("Loading...",button, 0, 20) {
+        this.addButton(this.pagebutton = new MenuButton("Loading...", button, 0, 20) {
             @Override
             public void onClick() {
             }
@@ -81,14 +81,17 @@ public class AchievementsState extends GameState {
     private int scrollOffset = 0, onDisplayID = 0;
     private boolean needReplace = true;
 
+    private Paint paint;
+
     private Bitmap namebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar);
     private Bitmap nonamebar = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_namebar_ai);
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.woodbg);
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
     private Bitmap plus = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_plus);
     private Bitmap minus = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_minus);
+    private Bitmap paper = BitmapFactory.decodeResource(holder.getResources(), R.drawable.textsquare);
 
-    private MenuButton button1, button2, button3, button4, buttonminus, buttonplus,pagebutton;
+    private MenuButton button1, button2, button3, button4, buttonminus, buttonplus, pagebutton;
 
     @Override
     public void print(Canvas buffer) {
@@ -96,6 +99,27 @@ public class AchievementsState extends GameState {
         if (this.needReplace) this.placeButtons(buffer);
         this.printUI(buffer);
 
+
+        //Draws the achievement description on the left side.
+        int text_left = 20, text_top = buffer.getHeight() / 5, text_right = buffer.getWidth() / 2, text_bot = buffer.getHeight() - 20;
+        buffer.drawBitmap(paper, null, new Rect(0, text_top, text_right, buffer.getHeight()), null);
+
+        Achievement displayed = Achievement.values()[onDisplayID];
+        this.paint.setTextSize(buffer.getHeight() / 15);
+        buffer.drawText(displayed.name, text_left, text_top + (buffer.getHeight() / 10), this.paint);
+
+        String[] words = (displayed.isAcquired()) ? displayed.description.split(" ") : "Achievement not unlocked yet...".split(" ");
+        this.paint.setTextSize(buffer.getHeight() / 18);
+        int hofs = 20, vofs = text_top + (buffer.getHeight() / 5);
+        for (int i = 0; i < words.length; ++i) {
+            int wordlength = (int) (paint.measureText(words[i]));
+            if (hofs + wordlength > text_right - 10) {
+                hofs = 10;
+                vofs += buffer.getHeight() / 12;
+            }
+            buffer.drawText(words[i], hofs, vofs, this.paint);
+            hofs += wordlength + paint.measureText(" ");
+        }
     }
 
     @Override
@@ -126,52 +150,53 @@ public class AchievementsState extends GameState {
         //plus and minus buttons
         y += pad * 2;
         this.buttonminus.width = this.buttonminus.height = this.buttonplus.width = this.buttonplus.height = pad;
-        int horalign =  buffer.getWidth() * 4 / 5;
+        int horalign = buffer.getWidth() * 4 / 5;
         this.buttonminus.y = this.buttonplus.y = y;
         this.buttonminus.x = horalign - pad;
         this.buttonplus.x = horalign + pad;
         //Page button
-        this.pagebutton.height = (int) (pad*1.5f);
-        this.pagebutton.width = buffer.getWidth()/5;
-        this.pagebutton.x =  buffer.getWidth() * 7 / 10;
+        this.pagebutton.height = (int) (pad * 1.5f);
+        this.pagebutton.width = buffer.getWidth() / 5;
+        this.pagebutton.x = buffer.getWidth() * 7 / 10;
 
         updatebuttons();
     }
 
     private void seeReplay(int offset) {
         int tosee = offset + this.scrollOffset;
+        onDisplayID = tosee;
     }
 
     private void updatebuttons() {
         Achievement[] vals = Achievement.values();
-        if (scrollOffset < vals.length){
+        if (scrollOffset < vals.length) {
             button1.text = vals[scrollOffset].name;
-            button1.bitmapOn = (vals[scrollOffset].isAcquired())?namebar:nonamebar;
-        }else{
+            button1.bitmapOn = (vals[scrollOffset].isAcquired()) ? namebar : nonamebar;
+        } else {
             button1.text = "...";
-            button1.bitmapOn =namebar;
+            button1.bitmapOn = namebar;
         }
-        if (scrollOffset + 1 < vals.length){
-            button2.text = vals[scrollOffset+1].name;
-            button2.bitmapOn = (vals[scrollOffset+1].isAcquired())?namebar:nonamebar;
-        }else{
+        if (scrollOffset + 1 < vals.length) {
+            button2.text = vals[scrollOffset + 1].name;
+            button2.bitmapOn = (vals[scrollOffset + 1].isAcquired()) ? namebar : nonamebar;
+        } else {
             button2.text = "...";
-            button2.bitmapOn =namebar;
+            button2.bitmapOn = namebar;
         }
-        if (scrollOffset + 2 < vals.length){
-            button3.text = vals[scrollOffset+2].name;
-            button3.bitmapOn = (vals[scrollOffset+2].isAcquired())?namebar:nonamebar;
-        }else{
+        if (scrollOffset + 2 < vals.length) {
+            button3.text = vals[scrollOffset + 2].name;
+            button3.bitmapOn = (vals[scrollOffset + 2].isAcquired()) ? namebar : nonamebar;
+        } else {
             button3.text = "...";
-            button3.bitmapOn =namebar;
+            button3.bitmapOn = namebar;
         }
-        if (scrollOffset + 3 < vals.length){
-            button4.text = vals[scrollOffset+3].name;
-            button4.bitmapOn = (vals[scrollOffset+3].isAcquired())?namebar:nonamebar;
-        }else{
+        if (scrollOffset + 3 < vals.length) {
+            button4.text = vals[scrollOffset + 3].name;
+            button4.bitmapOn = (vals[scrollOffset + 3].isAcquired()) ? namebar : nonamebar;
+        } else {
             button4.text = "...";
-            button4.bitmapOn =namebar;
+            button4.bitmapOn = namebar;
         }
-        pagebutton.text = "Page "+(scrollOffset/4+1)+"/"+((vals.length-1)/4+1);
+        pagebutton.text = "Page " + (scrollOffset / 4 + 1) + "/" + ((vals.length - 1) / 4 + 1);
     }
 }
