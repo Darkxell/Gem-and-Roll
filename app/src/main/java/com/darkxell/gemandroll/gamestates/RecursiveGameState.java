@@ -293,10 +293,8 @@ public class RecursiveGameState extends GameState {
             this.pouch[i].draw(buffer, holder, this.pouchStart + (this.pouchPad + this.pouchSize) * i, this.pouchY, this.pouchSize);
 
         if (this.substate >= DRAW && this.substate <= PLAYERCHOICE) {
-            int diceSize = this.width / 6, pad = diceSize / 8;
-            if (this.hand[0] != null) this.hand[0].draw(buffer, holder, this.horizontalSplit - diceSize / 2 - diceSize - pad, this.height / 3, diceSize);
-            if (this.hand[1] != null) this.hand[1].draw(buffer, holder, this.horizontalSplit - diceSize / 2, this.height / 3, diceSize);
-            if (this.hand[2] != null) this.hand[2].draw(buffer, holder, this.horizontalSplit + diceSize / 2 + pad, this.height / 3, diceSize);
+            for (int i = 0; i < this.hand.length; ++i)
+                if (this.hand[i] != null) this.hand[i].draw(buffer, super.holder, this.handLocations[i][0], this.handLocations[i][1], this.handSize);
         }
 
         if (this.substate == END) {
@@ -314,6 +312,8 @@ public class RecursiveGameState extends GameState {
         }
 
         this.printUI(buffer);
+
+        for (DiceAnimation a : this.animations) a.draw(buffer, holder);
 
         if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
             this.paint.setAlpha(128);
@@ -429,7 +429,7 @@ public class RecursiveGameState extends GameState {
         this.setSubstate(START);
     }
 
-    private static final int APPEAR = 10, STAY = 40, WAIT = 20, MOVE = 20;
+    private static final int APPEAR = 10, STAY = 40, WAIT = 20, MOVE = 60;
 
     @Override
     public void update() {
@@ -470,9 +470,18 @@ public class RecursiveGameState extends GameState {
         }
 
         if (this.substate == DAMAGE && this.stateTimer >= WAIT) {
-            for (int i = 0; i < this.hand.length; ++i) {
+            for (int i = 0; i < this.hand.length && this.trapCount() < 3; ++i) {
                 if (this.hand[i].getFace() == Dice.HURT) {
                     this.getHurt(this.hand[i]);
+                    DiceAnimation a = new DiceAnimation();
+                    a.dice = this.hand[i];
+                    a.startX = this.handLocations[i][0];
+                    a.startY = this.handLocations[i][1];
+                    a.startSize = this.handSize;
+                    int t = this.trapCount();
+                    a.setDestination(this.trapLocations[t][0], this.trapLocations[t][1], this.gemSize);
+                    a.duration = MOVE;
+                    this.animations.add(a);
                     this.hand[i] = null;
                 }
             }
@@ -523,6 +532,12 @@ public class RecursiveGameState extends GameState {
             }
             return;
         }
+    }
+
+    private int trapCount() {
+        int count = 0;
+        for (Dice d : this.traps) if (d != null) ++count;
+        return count;
     }
 
     private void getHurt(Dice dice) {

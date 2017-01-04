@@ -15,9 +15,8 @@ public class DiceAnimation {
     public int startX, startY, startSize;
     public int dX, dY, dSize;
     private int timer = 0;
-    private int duration;
+    public int duration;
     public Dice dice;
-    private boolean over;
 
     /**
      * Returns the bounds to display.
