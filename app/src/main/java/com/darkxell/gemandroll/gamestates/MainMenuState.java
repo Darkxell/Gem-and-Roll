@@ -42,7 +42,7 @@ public class MainMenuState extends GameState {
                 onButtonClick(PLAY);
             }
         });
-        this.addButton(this.buttonOptions = new MenuButton("Options", button, 0, 0) {
+        this.addButton(this.buttonOptions = new MenuButton("Achievements", button, 0, 0) {
             @Override
             public void onClick() {
                 onButtonClick(OPTIONS);
@@ -75,7 +75,6 @@ public class MainMenuState extends GameState {
 
     private double smoothoffsetc, smoothBGoffset;
     private float bgfixedOffest = 0f;
-    private boolean bgOffsetAscend = true;
 
     private int bufferwidth, bufferheight;
 
