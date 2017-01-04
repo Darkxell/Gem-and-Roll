@@ -92,9 +92,9 @@ public class RecursiveGameState extends GameState {
      */
     private SeededRNG generator;
     /**
-     * Dice pouches. Pouch are dices left to use, hand are dices being used and/or rerolled, and rolled are dices rolled and not landed on reroll.
+     * Dice pouches. Pouch are dices left to use, hand are dices being used and/or rerolled, gems are rolled dices that gave GEM, and traps are rolled dices that gave TRAP.
      */
-    private Dice[] pouch, rolled, hand;
+    private Dice[] pouch, gems, traps, hand;
     /**
      * Number of times this State has been called. Equals the current turn.
      */
@@ -165,6 +165,8 @@ public class RecursiveGameState extends GameState {
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
     private int width = 0, height = 0;
+    private int[][] gemsLocations, trapLocations;
+    private int gemSize;
 
     private void createUI() {
         this.buttonsPlayers = new MenuButton[this.players.length];
@@ -223,6 +225,12 @@ public class RecursiveGameState extends GameState {
 
         this.printUI(buffer);
 
+        // Draw rolled dices
+        for (int i = 0; i < this.gems.length; ++i) if (this.gems[i] != null)
+            this.gems[i].draw(buffer, holder, this.gemsLocations[i][0], this.gemsLocations[i][1], this.gemSize);
+        for (int i = 0; i < this.traps.length; ++i) if (this.traps[i] != null)
+            this.traps[i].draw(buffer, holder, this.trapLocations[i][0], this.trapLocations[i][1], this.gemSize);
+
         if (this.substate <= START && this.stateTimer < APPEAR * 2 + STAY) {
             this.paint.setAlpha(128);
             buffer.drawRect(new Rect(0, 0, this.width, this.height), this.paint);
@@ -255,6 +263,35 @@ public class RecursiveGameState extends GameState {
         this.verticalSplit = 2 * buffer.getHeight() / 3;
         this.horizontalSplit = buffer.getWidth() * 2 / 5;
 
+        // Process dice sizes & locations
+        int gemWidth = this.horizontalSplit / 6, gemHeight = (this.height - this.verticalSplit) / 4;
+        this.gemSize = Math.min(gemHeight, gemWidth);
+        int padX = gemWidth / 6, padY = gemHeight / 3;
+        int yOffset = (this.height - this.verticalSplit) / 2 - (gemWidth + padY / 2);
+        this.gemsLocations = new int[][] {
+                {padX, 0}, {gemWidth + padX * 2, 0}, {gemWidth * 2 + padX * 3, 0}, {gemWidth * 3 + padX * 4, 0}, {gemWidth * 4 + padX * 5, 0},
+                {padX, gemHeight + padY * 3 / 2}, {gemWidth + padX * 2, gemHeight + padY * 3 / 2}, {gemWidth * 2 + padX * 3, gemHeight + padY * 3 / 2}, {gemWidth * 3 + padX * 4, gemHeight + padY * 3 / 2}, {gemWidth * 4 + padX * 5, gemHeight + padY * 3 / 2},
+                {gemWidth / 2 + padX * 3 / 2, gemHeight / 2 + padY}, {gemWidth * 3 / 2 + padX * 5 / 2, gemHeight / 2 + padY}, {gemWidth * 5 / 2 + padX * 7 / 2, gemHeight / 2 + padY}
+        };
+        for (int i = 0; i < this.gemsLocations.length; ++i) {
+            this.gemsLocations[i][0] += this.height / 40;
+            this.gemsLocations[i][1] += this.verticalSplit + yOffset + this.height / 25;
+        }
+
+        //TODO remove this when done testing
+        for (int i = 0; i < this.gems.length; ++i) {
+            if (i % 3 == 0) this.gems[i] = Dice.getTypicalGreenDice();
+            if (i % 3 == 1) this.gems[i] = Dice.getTypicalRedDice();
+            if (i % 3 == 2) this.gems[i] = Dice.getTypicalYellowDice();
+            while (this.gems[i].getFace() != Dice.GEM) this.gems[i].roll(this.generator, holder);
+        }
+        for (int i = 0; i < this.traps.length; ++i) {
+            if (i % 3 == 0) this.traps[i] = Dice.getTypicalGreenDice();
+            if (i % 3 == 1) this.traps[i] = Dice.getTypicalRedDice();
+            if (i % 3 == 2) this.traps[i] = Dice.getTypicalYellowDice();
+            while (this.traps[i].getFace() != Dice.HURT) this.traps[i].roll(this.generator, holder);
+        }
+
         // Place the Player names UI
         int buttonWidth = this.width / 4;
         int pad = this.horizontalSplit / (this.players.length * 2 + 1);
@@ -267,23 +304,27 @@ public class RecursiveGameState extends GameState {
         }
 
         // Place the Player turn UI
+        this.trapLocations = new int[3][2];
         int buttonHeight = this.height - this.verticalSplit * 5 / 6;
         buttonWidth = (this.width - this.horizontalSplit) / 6;
         int buttonSize = Math.min(buttonHeight, buttonWidth);
         pad = buttonWidth / 5;
         pos = this.horizontalSplit + pad * 3 / 2 + buttonWidth / 2 - buttonSize / 2;
-        this.buttonHeart1.x = pos;
+        this.buttonHeart1.x = this.trapLocations[0][0] = pos;
         pos += pad + buttonWidth;
-        this.buttonHeart2.x = pos;
+        this.buttonHeart2.x = this.trapLocations[1][0] = pos;
         pos += pad + buttonWidth;
-        this.buttonHeart3.x = pos;
+        this.buttonHeart3.x = this.trapLocations[2][0] = pos;
         pos += pad + buttonWidth;
         this.buttonReroll.x = this.buttonEndTurn.x = pos;
         this.buttonReroll.y = this.verticalSplit + (this.height - this.verticalSplit) / 8;
         this.buttonEndTurn.y = this.buttonReroll.y + (this.height - this.verticalSplit) / 2;
         this.buttonHeart1.y = this.buttonHeart2.y = this.buttonHeart3.y = this.verticalSplit + (this.height - this.verticalSplit) / 2 - buttonSize / 2;
+        this.trapLocations[0][1] = this.trapLocations[1][1] = this.trapLocations[2][1] = this.buttonHeart1.y + buttonSize - pad;
         this.buttonHeart1.width = this.buttonHeart2.width = this.buttonHeart3.width = buttonSize;
         this.buttonReroll.width = this.buttonEndTurn.width = buttonSize * 2 + pad;
+        for (int i = 0; i < this.trapLocations.length; ++i)
+            this.trapLocations[i][0] += buttonSize / 2 - this.gemSize / 2;
 
         // Other components
         this.buttonCurrentPlayer.x = this.width / 4;
@@ -326,6 +367,7 @@ public class RecursiveGameState extends GameState {
                 if (this.hand[i] == null) this.hand[i] = this.drawDice();
             this.buttonRoll.visible = true;
             this.awatingInput = true;
+            if (this.stateTimer >= WAIT) this.setSubstate(COLLECT);
         }
     }
 
@@ -355,7 +397,8 @@ public class RecursiveGameState extends GameState {
     private void resetPouches() {
         this.pouch = getFullPouch();
         this.hand = new Dice[3];
-        this.rolled = new Dice[]{};
+        this.gems = new Dice[13];
+        this.traps = new Dice[3];
     }
 
     /**
