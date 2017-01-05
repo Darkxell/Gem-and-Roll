@@ -186,9 +186,8 @@ public class RecursiveGameState extends GameState {
     private MenuButton buttonEndTurn = new MenuButton("End turn", button) {
         @Override
         public void onClick() {
-            buttonProceed.visible = true;
             AudioBot.i().playSound(R.raw.back);
-            setSubstate(END);
+            startEndTurn();
         }
     };
     private MenuButton buttonReroll = new MenuButton("Reroll", button) {
@@ -217,7 +216,7 @@ public class RecursiveGameState extends GameState {
     private MenuButton buttonHeart1 = new MenuButton.Label("", heartfull), buttonHeart2 = new MenuButton.Label("", heartfull), buttonHeart3 = new MenuButton.Label("", heartfull);
     private MenuButton buttonCurrentPlayer;
     private MenuButton buttonContinue, buttonExit;
-    private MenuButton buttonPouch = new MenuButton.Label("Pouch :", button);
+    private MenuButton buttonPouch = new MenuButton.Label("Pouch", button);
 
     // Display logic
     private int horizontalSplit = 0, verticalSplit = 0;
@@ -477,7 +476,7 @@ public class RecursiveGameState extends GameState {
             animations.clear();
 
             int g = this.gemCount() - 1;
-            for (int i = 0; i < this.hand.length && this.trapCount() < 3; ++i) {
+            for (int i = 0; i < this.hand.length; ++i) {
                 if (this.hand[i] != null && this.hand[i].getFace() == Dice.GEM) {
                     DiceAnimation a = new DiceAnimation();
                     a.dice = this.hand[i];
@@ -508,8 +507,7 @@ public class RecursiveGameState extends GameState {
                         Statistics.instance.setStatValue(Statistics.Stat.DEATHS_ROW, this.deathsInARow[this.nowplaying]);
                 } else this.deathsInARow[this.nowplaying] = 0;
 
-                this.buttonProceed.visible = true;
-                this.setSubstate(END);
+                this.startEndTurn();
             }
             else if (this.currentHealth() > 0) this.setSubstate(PLAYERCHOICE);
             return;
@@ -517,10 +515,7 @@ public class RecursiveGameState extends GameState {
 
         if (this.substate == PLAYERCHOICE && this.players[this.nowplaying].isAI()) {
             if (PlayerAI.getAI(this.players[this.nowplaying].AItype).shouldPlay(this.currentHealth(), this.players[this.nowplaying].getScore(), this.getHand(), this.getRolled())) this.reroll();
-            else {
-                buttonProceed.visible = true;
-                setSubstate(END);
-            }
+            else this.startEndTurn();
             return;
         }
 
@@ -528,12 +523,17 @@ public class RecursiveGameState extends GameState {
             if (this.rerollsToGo > 0) {
                 --this.rerollsToGo;
                 this.reroll();
-            } else {
-                buttonProceed.visible = true;
-                setSubstate(END);
-            }
+            } else this.startEndTurn();
             return;
         }
+
+        if (this.substate == END && !this.buttonProceed.visible && this.stateTimer >= STAY) this.endTurn();
+    }
+
+    private void startEndTurn() {
+        if (!this.isReplay && !this.players[this.nowplaying].isAI())
+            this.buttonProceed.visible = true;
+        this.setSubstate(END);
     }
 
     private int gemCount() {
@@ -617,7 +617,7 @@ public class RecursiveGameState extends GameState {
                 && !Achievement.LUCKY3.isAcquired()) Achievement.LUCKY3.setAcquired(true, true);
 
         int t = this.trapCount() - 1;
-        for (int i = 0; i < this.hand.length && this.trapCount() < 3; ++i) {
+        for (int i = 0; i < this.hand.length && t < 2; ++i) {
             if (this.hand[i].getFace() == Dice.HURT) {
                 DiceAnimation a = new DiceAnimation();
                 a.dice = this.hand[i];
@@ -654,7 +654,13 @@ public class RecursiveGameState extends GameState {
             Statistics.instance.increaseStat(Statistics.Stat.TOTAL_DEATHS, 1);
         }
 
-        if (this.players[this.nowplaying].getScore() >= 13) super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay, this.isReplay));
+        if (this.players[this.nowplaying].getScore() >= 13) {
+            int score = this.players[this.nowplaying].getScore();
+            if (Statistics.instance.getStatValue(Statistics.Stat.HIGH_SCORE) < score)
+                Statistics.instance.setStatValue(Statistics.Stat.HIGH_SCORE, score);
+            Statistics.instance.increaseStat(Statistics.Stat.GAME_COUNT, 1);
+            super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay, this.isReplay));
+        }
         else super.holder.setState(new RecursiveGameState(this));
     }
 
