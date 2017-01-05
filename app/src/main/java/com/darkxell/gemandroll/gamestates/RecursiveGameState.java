@@ -655,11 +655,13 @@ public class RecursiveGameState extends GameState {
         }
 
         if (this.players[this.nowplaying].getScore() >= 13) {
-            int score = this.players[this.nowplaying].getScore();
-            if (Statistics.instance.getStatValue(Statistics.Stat.HIGH_SCORE) < score)
-                Statistics.instance.setStatValue(Statistics.Stat.HIGH_SCORE, score);
-            Statistics.instance.increaseStat(Statistics.Stat.GAME_COUNT, 1);
-            super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay, this.isReplay));
+            if (!this.isReplay) {
+                int score = this.players[this.nowplaying].getScore();
+                if (Statistics.instance.getStatValue(Statistics.Stat.HIGH_SCORE) < score)
+                    Statistics.instance.setStatValue(Statistics.Stat.HIGH_SCORE, score);
+                Statistics.instance.increaseStat(Statistics.Stat.GAME_COUNT, 1);
+                super.holder.setState(new EndGameState(super.holder, this.players, this.currentreplay, this.isReplay));
+            }
         }
         else super.holder.setState(new RecursiveGameState(this));
     }
