@@ -63,10 +63,15 @@ public class MainMenuState extends GameState {
         } else if (buttonID == REPLAYS) {
             Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
             super.holder.setState(new ReplaysState(super.holder));
-        } else if (buttonID == PLAY)
+            AudioBot.i().playSound(R.raw.accept);
+        } else if (buttonID == PLAY) {
             super.holder.setState(new PlayerSelectionState(super.holder));
-        else if (buttonID == STATS)
+            AudioBot.i().playSound(R.raw.accept);
+        }
+        else if (buttonID == STATS) {
             super.holder.setState(new StatisticsState(super.holder));
+            AudioBot.i().playSound(R.raw.accept);
+        }
     }
 
     private int verticaloffset;

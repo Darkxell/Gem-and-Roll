@@ -31,6 +31,7 @@ public class AchievementsState extends GameState {
             @Override
             public void onClick() {
                 onBackPressed();
+                AudioBot.i().playSound(R.raw.back);
             }
         });
 
@@ -38,24 +39,28 @@ public class AchievementsState extends GameState {
             @Override
             public void onClick() {
                 seeReplay(0);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.button2 = new MenuButton("", namebar, 0, 0) {
             @Override
             public void onClick() {
                 seeReplay(1);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.button3 = new MenuButton("", namebar, 0, 0) {
             @Override
             public void onClick() {
                 seeReplay(2);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.button4 = new MenuButton("", namebar, 0, 0) {
             @Override
             public void onClick() {
                 seeReplay(3);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonminus = new MenuButton("", minus, 0, 20) {
@@ -63,6 +68,7 @@ public class AchievementsState extends GameState {
             public void onClick() {
                 if (scrollOffset > 0) scrollOffset -= 4;
                 updatebuttons();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonplus = new MenuButton("", plus, 0, 20) {
@@ -70,6 +76,7 @@ public class AchievementsState extends GameState {
             public void onClick() {
                 if (scrollOffset + 4 < Achievement.values().length - 1) scrollOffset += 4;
                 updatebuttons();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.pagebutton = new MenuButton("Loading...", button, 0, 20) {

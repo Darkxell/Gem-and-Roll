@@ -78,6 +78,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
             @Override
             public void onClick() {
                 startGame();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
 
@@ -89,6 +90,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
                     ++playerCount;
                     buttonNumberPlayers.text = Integer.toString(playerCount);
                     needReplace = true;
+                    AudioBot.i().playSound(R.raw.accept);
                 }
             }
         });
@@ -99,6 +101,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
                     --playerCount;
                     buttonNumberPlayers.text = Integer.toString(playerCount);
                     needReplace = true;
+                    AudioBot.i().playSound(R.raw.accept);
                 }
             }
         });
@@ -113,24 +116,28 @@ public class PlayerSelectionState extends GameState implements TextInputListener
             @Override
             public void onClick() {
                 editName(0);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonP2 = new MenuButton(names[1], namebar, 0, 0) {
             @Override
             public void onClick() {
                 editName(1);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonP3 = new MenuButton(names[2], namebar, 0, 0) {
             @Override
             public void onClick() {
                 editName(2);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonP4 = new MenuButton(names[3], namebar, 0, 0) {
             @Override
             public void onClick() {
                 editName(3);
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
 
@@ -138,6 +145,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         this.addButton(this.buttonAI1 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
+                AudioBot.i().playSound(R.raw.accept);
                 isAI[0] = !isAI[0];
                 this.bitmapOn = isAI[0] ? boxChecked : boxUnchecked;
                 buttonP1.bitmapOn = isAI[0] ? namebarAI : namebar;
@@ -146,6 +154,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         this.addButton(this.buttonAI2 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
+                AudioBot.i().playSound(R.raw.accept);
                 isAI[1] = !isAI[1];
                 this.bitmapOn = isAI[1] ? boxChecked : boxUnchecked;
                 buttonP2.bitmapOn = isAI[1] ? namebarAI : namebar;
@@ -154,6 +163,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         this.addButton(this.buttonAI3 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
+                AudioBot.i().playSound(R.raw.accept);
                 isAI[2] = !isAI[2];
                 this.bitmapOn = isAI[2] ? boxChecked : boxUnchecked;
                 buttonP3.bitmapOn = isAI[2] ? namebarAI : namebar;
@@ -162,6 +172,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
         this.addButton(this.buttonAI4 = new MenuButton("", boxUnchecked, 0, 0) {
             @Override
             public void onClick() {
+                AudioBot.i().playSound(R.raw.accept);
                 isAI[3] = !isAI[3];
                 this.bitmapOn = isAI[3] ? boxChecked : boxUnchecked;
                 buttonP4.bitmapOn = isAI[3] ? namebarAI : namebar;
@@ -171,6 +182,7 @@ public class PlayerSelectionState extends GameState implements TextInputListener
 
     /**
      * Called when the user clicks on a Player name.
+     *
      * @param player - The player number.
      */
     private void editName(int player) {
@@ -183,7 +195,8 @@ public class PlayerSelectionState extends GameState implements TextInputListener
      */
     private void startGame() {
         Player[] players = new Player[this.playerCount];
-        for (int i = 0; i < players.length; ++i) players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
+        for (int i = 0; i < players.length; ++i)
+            players[i] = new Player(this.names[i], (byte) (this.isAI[i] ? PlayerAI.TurnValueAI : PlayerAI.UndefinedAI));
         super.holder.setState(new RecursiveGameState(super.holder, players));
         /*players[0].deaths = 3;
         for (int i = 0; i < 18; ++i) players[0].addGem(DiceResult.getRandomGem(super.holder));
