@@ -72,4 +72,16 @@ public class AudioBot {
         } catch (Exception e) {
         }
     }
+
+    /**
+     * Stop the players.
+     */
+    public void stop() {
+        if (bgm != null) {
+            bgm.stop();
+        }
+        if (soundplayer != null) {
+            soundplayer.stop();
+        }
+    }
 }

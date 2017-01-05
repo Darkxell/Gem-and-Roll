@@ -106,11 +106,13 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         this.updater.kill();
+        AudioBot.i().stop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         this.updater.kill();
+        AudioBot.i().stop();
     }
 }
