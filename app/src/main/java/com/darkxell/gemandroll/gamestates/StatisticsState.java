@@ -8,6 +8,7 @@ import android.graphics.Rect;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.gamestates.statesutility.GameState;
 import com.darkxell.gemandroll.gamestates.statesutility.MenuButton;
 import com.darkxell.gemandroll.mechanics.Achievement;
@@ -21,6 +22,7 @@ public class StatisticsState extends GameState {
     public StatisticsState(MainActivity holder) {
         super(holder);
 
+        AudioBot.i().setBGM(R.raw.menus);
         this.createUI();
     }
 
