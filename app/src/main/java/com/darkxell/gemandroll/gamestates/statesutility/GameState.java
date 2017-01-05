@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 import com.darkxell.gemandroll.mechanics.Achievement;
 
 /**
@@ -94,7 +95,10 @@ public abstract class GameState {
         }
 
         if (achievementsToShow.length > 0) {
-            if (achievementTimer == 0) buttonAchievement.text = "Success! " + achievementsToShow[0].name;
+            if (achievementTimer == 0){
+                buttonAchievement.text = "Success! " + achievementsToShow[0].name;
+                AudioBot.i().playSound(R.raw.achievement);
+            }
             ++achievementTimer;
             if (achievementTimer >= STAY + 2 * APPEAR) {
                 // Skip to next achievement

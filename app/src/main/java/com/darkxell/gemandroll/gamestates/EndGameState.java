@@ -90,24 +90,28 @@ public class EndGameState extends GameState implements TextInputListener {
         @Override
         public void onClick() {
             select(0);
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
     private MenuButton buttonP2 = new MenuButton("", namebar) {
         @Override
         public void onClick() {
             select(1);
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
     private MenuButton buttonP3 = new MenuButton("", namebar) {
         @Override
         public void onClick() {
             select(2);
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
     private MenuButton buttonP4 = new MenuButton("", namebar) {
         @Override
         public void onClick() {
             select(3);
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
 
@@ -115,12 +119,14 @@ public class EndGameState extends GameState implements TextInputListener {
         @Override
         public void onClick() {
             onBackPressed();
+            AudioBot.i().playSound(R.raw.back);
         }
     };
     private MenuButton buttonReplay = new MenuButton("Replay: ", namebar_left) {
         @Override
         public void onClick() {
             editReplay();
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
 
@@ -128,6 +134,7 @@ public class EndGameState extends GameState implements TextInputListener {
         @Override
         public void onClick() {
             saveReplay();
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
 

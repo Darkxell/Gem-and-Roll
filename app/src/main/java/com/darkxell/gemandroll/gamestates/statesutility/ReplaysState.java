@@ -39,6 +39,7 @@ public class ReplaysState extends GameState {
             @Override
             public void onClick() {
                 onBackPressed();
+                AudioBot.i().playSound(R.raw.back);
             }
         });
 
@@ -71,6 +72,7 @@ public class ReplaysState extends GameState {
             public void onClick() {
                 if (scrollOffset > 0) scrollOffset -= 4;
                 updatebuttons();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonplus = new MenuButton("", plus, 0, 20) {
@@ -78,6 +80,7 @@ public class ReplaysState extends GameState {
             public void onClick() {
                 if (scrollOffset + 4 < replays.size() - 1) scrollOffset += 4;
                 updatebuttons();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.pagebutton = new MenuButton("Loading...", button, 0, 20) {
@@ -148,6 +151,7 @@ public class ReplaysState extends GameState {
 
     private void seeReplay(int offset) {
         int tosee = offset + this.scrollOffset;
+        AudioBot.i().playSound(R.raw.accept);
         if (tosee < replays.size()&&counter>20)
             super.holder.setState(new RecursiveGameState(this.replays.get(tosee), super.holder));
     }

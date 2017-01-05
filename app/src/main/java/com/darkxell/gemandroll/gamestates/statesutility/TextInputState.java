@@ -8,6 +8,7 @@ import android.view.KeyEvent;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.R;
+import com.darkxell.gemandroll.audio.AudioBot;
 
 /**
  * Created by Cubi on 01/01/2017.
@@ -56,6 +57,7 @@ public class TextInputState extends GameState {
         else if (keyCode == KeyEvent.KEYCODE_ENTER) {
             this.listener.onInput(this.input);
             super.holder.hideKeyboard();
+            AudioBot.i().playSound(R.raw.accept);
         }
         else if (keyCode == KeyEvent.KEYCODE_BACK) {
             this.listener.cancelInput();

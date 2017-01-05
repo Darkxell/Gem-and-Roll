@@ -33,7 +33,11 @@ public class AudioBot {
      */
     public void setBGM(int song) {
         try {
-            if (bgm != null) bgm.stop();
+            if (bgm != null) {
+                bgm.stop();
+                bgm.reset();
+                bgm.release();
+            }
             bgm = MediaPlayer.create(context, song);
             bgm.setAudioStreamType(AudioManager.STREAM_MUSIC);
             bgm.setLooping(true);
@@ -43,14 +47,28 @@ public class AudioBot {
 
     }
 
+
+    /**
+     * The player used to play the foreground music.
+     */
+    private MediaPlayer soundplayer;
+
     /**
      * Plays this sound in a new thread as soon as possible.
      */
-    public void playSound(int song) {
+    public void playSound(int sound) {
         try {
-            MediaPlayer mPlayer = MediaPlayer.create(context, song);
-            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mPlayer.start();
+            if (soundplayer != null) {
+                try {
+                    soundplayer.stop();
+                } catch (Exception e) {
+                }
+                soundplayer.reset();
+                soundplayer.release();
+            }
+            soundplayer = MediaPlayer.create(context, sound);
+            soundplayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            soundplayer.start();
         } catch (Exception e) {
         }
     }
