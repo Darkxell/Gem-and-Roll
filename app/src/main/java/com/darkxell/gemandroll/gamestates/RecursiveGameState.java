@@ -187,6 +187,7 @@ public class RecursiveGameState extends GameState {
         @Override
         public void onClick() {
             buttonProceed.visible = true;
+            AudioBot.i().playSound(R.raw.back);
             setSubstate(END);
         }
     };
@@ -194,18 +195,21 @@ public class RecursiveGameState extends GameState {
         @Override
         public void onClick() {
             reroll();
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
     private MenuButton buttonRoll = new MenuButton("Roll !", button) {
         @Override
         public void onClick() {
             roll();
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
     private MenuButton buttonProceed = new MenuButton("Proceed", button) {
         @Override
         public void onClick() {
             endTurn();
+            AudioBot.i().playSound(R.raw.accept);
         }
     };
 
@@ -239,12 +243,14 @@ public class RecursiveGameState extends GameState {
             @Override
             public void onClick() {
                 onBackPressed();
+                AudioBot.i().playSound(R.raw.accept);
             }
         });
         this.addButton(this.buttonExit = new MenuButton("Exit", button) {
             @Override
             public void onClick() {
                 onExit();
+                AudioBot.i().playSound(R.raw.back);
             }
         });
         this.buttonCurrentPlayer = new MenuButton.Label(this.players[this.nowplaying].name + "'s Turn", namebar_full);
@@ -497,6 +503,7 @@ public class RecursiveGameState extends GameState {
             if (this.pouch.length + handSize < 3 || this.currentHealth() <= 0) {
                 if (this.currentHealth() <= 0) {
                     ++this.deathsInARow[this.nowplaying];
+                    AudioBot.i().playSound(R.raw.hurt);
                     if (this.deathsInARow[this.nowplaying] > Statistics.instance.getStatValue(Statistics.Stat.DEATHS_ROW))
                         Statistics.instance.setStatValue(Statistics.Stat.DEATHS_ROW, this.deathsInARow[this.nowplaying]);
                 } else this.deathsInARow[this.nowplaying] = 0;
