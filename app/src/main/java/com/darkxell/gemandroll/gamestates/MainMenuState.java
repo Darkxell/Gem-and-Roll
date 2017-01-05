@@ -51,9 +51,10 @@ public class MainMenuState extends GameState {
 
     private void onButtonClick(int buttonID) {
 
-        if (buttonID == OPTIONS)
+        if (buttonID == OPTIONS){
             super.holder.setState(new AchievementsState(super.holder));
-        else if (buttonID == REPLAYS) {
+            AudioBot.i().playSound(R.raw.accept);
+        }else if (buttonID == REPLAYS) {
             Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
             super.holder.setState(new ReplaysState(super.holder));
         } else if (buttonID == PLAY)
