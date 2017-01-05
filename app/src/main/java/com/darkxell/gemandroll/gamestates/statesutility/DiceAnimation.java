@@ -1,7 +1,9 @@
 package com.darkxell.gemandroll.gamestates.statesutility;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.darkxell.gemandroll.MainActivity;
 import com.darkxell.gemandroll.mechanics.Dice;
@@ -22,15 +24,11 @@ public class DiceAnimation {
      * Returns the bounds to display.
      */
     public Rect getCurrentBounds() {
-        float m = this.currentMultiplier();
-        return new Rect((int) (this.startX + this.dX * m),
-                (int) (this.startY + this.dY * m),
-                (int) (this.startSize + this.dSize * m),
-                (int) (this.startSize + this.dSize * m));
-    }
-
-    private float currentMultiplier() {
-        return this.isOver() ? 1 : this.timer * 1f / this.duration;
+        if (this.isOver()) return new Rect(startX + dX, startY + dY, startX + dX + startSize + dSize, startY + dY + startSize + dSize);
+        int x = (int) (this.startX + this.dX * this.timer / this.duration), y = (int) (this.startY + this.dY * this.timer / this.duration);
+        return new Rect(x, y,
+                (int) (x + this.startSize + this.dSize * this.timer / this.duration),
+                (int) (y + this.startSize + this.dSize * this.timer / this.duration));
     }
 
     public void draw(Canvas buffer, MainActivity holder) {

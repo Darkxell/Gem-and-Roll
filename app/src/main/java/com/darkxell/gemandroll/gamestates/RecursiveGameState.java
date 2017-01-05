@@ -432,7 +432,7 @@ public class RecursiveGameState extends GameState {
         this.setSubstate(START);
     }
 
-    private static final int APPEAR = 10, STAY = 40, WAIT = 20, MOVE = 60;
+    private static final int APPEAR = 10, STAY = 40, WAIT = 20, MOVE = 20;
 
     @Override
     public void update() {
@@ -442,13 +442,7 @@ public class RecursiveGameState extends GameState {
 
         if (!this.awatingInput) ++this.stateTimer;
 
-        for (int i = 0; i < this.animations.size(); ++i) {
-            this.animations.get(i).update();
-            if (this.animations.get(i).isOver()) {
-                this.animations.remove(i);
-                --i;
-            }
-        }
+        if (this.stateTimer >= WAIT) for (int i = 0; i < this.animations.size(); ++i) this.animations.get(i).update();
 
         if (this.substate == START) {
             int pixels = this.height * 3 / 5 / APPEAR;
@@ -472,34 +466,32 @@ public class RecursiveGameState extends GameState {
             return;
         }
 
-        if (this.substate == DAMAGE && this.stateTimer >= WAIT) {
+        if (this.substate == DAMAGE && (this.animations.size() == 0 || this.animations.get(0).isOver())) {
+            for (DiceAnimation a : this.animations) this.hurt(a.dice);
+            animations.clear();
+
+            int g = this.gemCount() - 1;
             for (int i = 0; i < this.hand.length && this.trapCount() < 3; ++i) {
-                if (this.hand[i].getFace() == Dice.HURT) {
-                    this.getHurt(this.hand[i]);
+                if (this.hand[i] != null && this.hand[i].getFace() == Dice.GEM) {
                     DiceAnimation a = new DiceAnimation();
                     a.dice = this.hand[i];
                     a.startX = this.handLocations[i][0];
                     a.startY = this.handLocations[i][1];
                     a.startSize = this.handSize;
-                    int t = this.trapCount();
-                    a.setDestination(this.trapLocations[t][0], this.trapLocations[t][1], this.gemSize);
+                    ++g;
+                    a.setDestination(this.gemsLocations[g][0], this.gemsLocations[g][1], this.gemSize);
                     a.duration = MOVE;
                     this.animations.add(a);
                     this.hand[i] = null;
                 }
             }
+            this.setSubstate(COLLECT);
+            return;
         }
 
-        if (this.substate == ROLL && this.stateTimer >= WAIT) {
-            for (int i = 0; i < this.hand.length; ++i) {
-                if (this.hand[i].getFace() == Dice.HURT) {
-                    this.getHurt(this.hand[i]);
-                    this.hand[i] = null;
-                } else if (this.hand[i].getFace() == Dice.GEM) {
-                    this.collectGem(this.hand[i]);
-                    this.hand[i] = null;
-                }
-            }
+        if (this.substate == COLLECT && (this.animations.size() == 0 || this.animations.get(0).isOver())) {
+            for (DiceAnimation a : this.animations) this.collectGem(a.dice);
+            animations.clear();
             int handSize = 0;
             for (Dice d : this.hand) if (d != null) ++handSize;
             if (this.pouch.length + handSize < 3 || this.currentHealth() <= 0) {
@@ -537,13 +529,19 @@ public class RecursiveGameState extends GameState {
         }
     }
 
+    private int gemCount() {
+        int count = 0;
+        for (Dice d : this.gems) if (d != null) ++count;
+        return count;
+    }
+
     private int trapCount() {
         int count = 0;
         for (Dice d : this.traps) if (d != null) ++count;
         return count;
     }
 
-    private void getHurt(Dice dice) {
+    private void hurt(Dice dice) {
         for (int i = 0; i < this.traps.length; ++i)
             if (this.traps[i] == null) {
                 this.traps[i] = dice;
@@ -606,11 +604,27 @@ public class RecursiveGameState extends GameState {
         for (Dice d : this.hand) if (d != null) d.roll(this.generator, super.holder);
         this.awatingInput = false;
         this.buttonRoll.visible = false;
-        this.setSubstate(DAMAGE);
 
         if (this.gems[0] == null && this.traps[0] == null && this.stateiteration < this.players.length
                 && this.hand[0].getFace() == Dice.GEM && this.hand[1].getFace() == Dice.GEM && this.hand[2].getFace() == Dice.GEM
                 && !Achievement.LUCKY3.isAcquired()) Achievement.LUCKY3.setAcquired(true, true);
+
+        int t = this.trapCount() - 1;
+        for (int i = 0; i < this.hand.length && this.trapCount() < 3; ++i) {
+            if (this.hand[i].getFace() == Dice.HURT) {
+                DiceAnimation a = new DiceAnimation();
+                a.dice = this.hand[i];
+                a.startX = this.handLocations[i][0];
+                a.startY = this.handLocations[i][1];
+                a.startSize = this.handSize;
+                ++t;
+                a.setDestination(this.trapLocations[t][0], this.trapLocations[t][1], this.gemSize);
+                a.duration = MOVE;
+                this.animations.add(a);
+                this.hand[i] = null;
+            }
+        }
+        this.setSubstate(DAMAGE);
     }
 
     /**
