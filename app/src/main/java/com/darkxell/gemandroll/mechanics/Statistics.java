@@ -12,15 +12,15 @@ public class Statistics {
 
     public static enum Stat {
 
-        DEATHS_ROW("Deaths in a row"),
-        DICES_ROLLED("Dices rolled"),
-        GAME_COUNT("Games played"),
         GEM_COUNT("Gems collected"),
-        HIGH_SCORE("High score"),
-        HURT_COUNT("Traps activated"),
         REROLL_COUNT("Pickaxes found"),
-        TOTAL_SCORE("Total score"),
+        HURT_COUNT("Traps activated"),
+        HIGH_SCORE("High score"),
+        DICES_ROLLED("Dices rolled"),
+        GAME_COUNT("Games completed"),
+        DEATHS_ROW("Deaths in a row"),
         TOTAL_DEATHS("Total deaths"),
+        TOTAL_SCORE("Total score"),
         REPLAYS_ENTERED("Replays entered");
 
         public final String name;

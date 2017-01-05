@@ -19,7 +19,7 @@ import com.darkxell.gemandroll.mechanics.Statistics;
 
 public class MainMenuState extends GameState {
 
-    private static final int PLAY = 0, OPTIONS = 1, REPLAYS = 2;
+    private static final int PLAY = 0, OPTIONS = 1, REPLAYS = 2, STATS = 3;
     /**
      * True if the Main Menu animation has played already. If so, it will not play again.
      */
@@ -46,19 +46,27 @@ public class MainMenuState extends GameState {
                 onButtonClick(REPLAYS);
             }
         });
+        this.addButton(this.buttonStats = new MenuButton("Statistics", button, 0, 0) {
+            @Override
+            public void onClick() {
+                onButtonClick(STATS);
+            }
+        });
         AudioBot.i().setBGM(R.raw.home);
     }
 
     private void onButtonClick(int buttonID) {
 
-        if (buttonID == OPTIONS){
+        if (buttonID == OPTIONS) {
             super.holder.setState(new AchievementsState(super.holder));
             AudioBot.i().playSound(R.raw.accept);
-        }else if (buttonID == REPLAYS) {
+        } else if (buttonID == REPLAYS) {
             Statistics.instance.setStatValue(Statistics.Stat.REPLAYS_ENTERED, Statistics.instance.getStatValue(Statistics.Stat.REPLAYS_ENTERED) + 1);
             super.holder.setState(new ReplaysState(super.holder));
         } else if (buttonID == PLAY)
             super.holder.setState(new PlayerSelectionState(super.holder));
+        else if (buttonID == STATS)
+            super.holder.setState(new StatisticsState(super.holder));
     }
 
     private int verticaloffset;
@@ -66,7 +74,8 @@ public class MainMenuState extends GameState {
     private Bitmap background = BitmapFactory.decodeResource(holder.getResources(), R.drawable.menubackground);
     private Bitmap title = BitmapFactory.decodeResource(holder.getResources(), R.drawable.title);
     private Bitmap button = BitmapFactory.decodeResource(holder.getResources(), R.drawable.ui_button);
-    private MenuButton buttonPlay, buttonOptions, buttonReplays;
+    // Button Options was renamed to achievements later on.
+    private MenuButton buttonPlay, buttonOptions, buttonReplays, buttonStats;
 
     private double smoothoffsetc, smoothBGoffset;
     private float bgfixedOffest = 0f;
@@ -116,9 +125,13 @@ public class MainMenuState extends GameState {
         this.buttonReplays.x = (3 * buffer.getWidth() / 4) - (buttonwidth / 2);
         this.buttonReplays.y = this.buttonOptions.y;
 
+        // Place the play button
+        this.buttonStats.x = this.buttonPlay.x;
+        this.buttonStats.y = this.buttonPlay.y + buttonheight * 3 / 2;
+
         // Set buttons size
-        this.buttonPlay.width = this.buttonOptions.width = this.buttonReplays.width = buttonwidth;
-        this.buttonPlay.height = this.buttonOptions.height = this.buttonReplays.height = buttonheight;
+        this.buttonPlay.width = this.buttonOptions.width = this.buttonReplays.width = this.buttonStats.width = buttonwidth;
+        this.buttonPlay.height = this.buttonOptions.height = this.buttonReplays.height = this.buttonStats.height = buttonheight;
     }
 
     @Override
